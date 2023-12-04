@@ -87,7 +87,7 @@ export default function Video() {
         {registervideo ? (
           <p className="text-success">Video Added!</p>
         ) : (
-          <p className="text-danger">Video Not Yet Added</p>
+          <p className="text-danger">Video Not Yet Registered</p>
         )}
       </Form>
     </>

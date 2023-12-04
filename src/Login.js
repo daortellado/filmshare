@@ -9,6 +9,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [login, setLogin] = useState(false);
+  const token = cookies.get("TOKEN");
 
   const handleSubmit = (e) => {
     // prevent the form from refreshing the whole page
@@ -42,9 +43,10 @@ export default function Login() {
   };
 
   return (
-    <>
-      <h2>Login</h2>
-      <Form onSubmit={(e) => handleSubmit(e)}>
+    <div className="text-center">
+      <h2>Welcome Warriors!</h2>
+      <img src="%PUBLIC_URL%/wclogo.jpeg"></img>
+      <Form style={{display: token ? 'none' : 'block' }} onSubmit={(e) => handleSubmit(e)}>
         {/* email */}
         <Form.Group controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
@@ -79,12 +81,13 @@ export default function Login() {
         </Button>
 
         {/* display success message */}
-        {login ? (
-          <p className="text-success">You Are Logged in Successfully</p>
-        ) : (
-          <p className="text-danger">You Are Not Logged in</p>
-        )}
       </Form>
-    </>
+      {token ? (
+          <p className="text-success">You Are Logged In</p>
+        ) : (
+          <p className="text-danger">You Are Not Logged In</p>
+        )}
+        <i><b>Review video of this season's games by clicking on "Clip Collections" above.</b></i>
+      </div>
   );
 }

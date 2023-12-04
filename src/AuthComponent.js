@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import ReactPlayer from 'react-player'
+import './App.css';
 const cookies = new Cookies();
 
 // get token generated on login
@@ -66,10 +67,14 @@ export default function AuthComponent() {
       ))}
       </p>
       {result.map((video) => (
+        <div className="paddeddiv">
         <div className="card">
-          <p>{video.videoname}</p>
-          <p>{video.game}</p>
-          <ReactPlayer controls url={video.link} />
+          <b>{video.videoname}</b>
+          <i>{video.game}</i>
+          </div>
+          <div className='player-wrapper'>
+          <ReactPlayer controls url={video.link} className='react-player' width='100%' height='100%'/>
+          </div>
         </div>
       ))}
     </div>

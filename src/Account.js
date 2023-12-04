@@ -6,8 +6,12 @@ export default function Account() {
   return (
     <Row>
       {/* Login */}
-      <Col xs={12} sm={12} md={6} lg={6}>
+      <Col>
+      </Col>
+      <Col>
         <Login />
+      </Col>
+      <Col>
       </Col>
     </Row>
   );
