@@ -42,7 +42,7 @@ export default function Login() {
   return (
     <div className="text-center">
       <h2>Welcome Warriors!</h2>
-      <img src="%PUBLIC_URL%/wclogo.jpeg" alt="west campus logo"></img>
+      <img src="./%PUBLIC_URL%/wclogo.jpeg" alt="west campus logo"></img>
       <Form style={{display: token ? 'none' : 'block' }} onSubmit={(e) => handleSubmit(e)}>
         {/* email */}
         <Form.Group controlId="formBasicEmail">
