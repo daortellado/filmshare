@@ -45,7 +45,7 @@ export default function AuthComponent() {
   }
 
   let games = videolist.map(a => a.game);
-  let uniquegames = [... new Set(games)]
+  let uniquegames = [...new Set(games)]
 
   return (
     <div className="text-center">
