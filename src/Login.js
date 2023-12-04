@@ -33,8 +33,6 @@ export default function Login() {
         });
         // redirect user to the auth page
         window.location.href = "/auth";
-
-        setLogin(true);
       })
       .catch((error) => {
         error = new Error();
