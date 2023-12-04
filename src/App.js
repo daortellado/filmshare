@@ -19,7 +19,8 @@ function App() {
     <Container>
       <Row>
         <Col className="text-center">
-          <h1>WCHS Women's Soccer FilmShare</h1>
+          <h1><b>Film<i>Share</i></b></h1>
+          <h2>WCHS Women's Soccer</h2>
 
           <section id="navigation">
             <a href="/">Home</a>

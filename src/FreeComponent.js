@@ -29,10 +29,8 @@ export default function FreeComponent() {
 
   return (
     <div>
-      <h1 className="text-center">Admin Portal</h1>
-
       {/* displaying our message from our API call */}
-      <h3 className="text-center text-danger">{message}</h3>
+      <h4 className="text-center text-danger"><i>*{message}*</i></h4>
             {/* Register */}
         <Row>
         <Col xs={12} sm={12} md={6} lg={6}>

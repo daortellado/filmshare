@@ -50,13 +50,11 @@ export default function AuthComponent() {
 
   return (
     <div className="text-center">
-      <h1>Clip Collections</h1>
-      {/* displaying our message from our API call */}
-
+      <h4>Select a <b>game</b> by clicking one of the buttons below:</h4>
       <div className="App">
       <p>
       {uniquegames.map((game) => (
-      <button value={game} onClick={e => {
+      <button class="btn btn-outline-light" value={game} onClick={e => {
         setResult(videolist.filter((video) => {
           return video.game === game;
       }));
