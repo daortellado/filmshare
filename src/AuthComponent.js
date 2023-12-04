@@ -1,10 +1,8 @@
-import React, { useEffect, useState, Table } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import ReactPlayer from 'react-player'
-import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 const cookies = new Cookies();
 
 // get token generated on login
@@ -13,7 +11,6 @@ const token = cookies.get("TOKEN");
 export default function AuthComponent() {
   // set an initial state for the message we will receive after the API call
   const [videolist, setVideoList] = useState([]);
-  const [filteredValue, setFilteredValue] = useState();
   const [result, setResult] = useState([]);
 
   // useEffect automatically executes once the page is fully loaded
@@ -59,7 +56,6 @@ export default function AuthComponent() {
       <p>
       {uniquegames.map((game) => (
       <button value={game} onClick={e => {
-        setFilteredValue(game) //this line logs some object
         setResult(videolist.filter((video) => {
           return video.game === game;
       }));
