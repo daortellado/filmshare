@@ -8,7 +8,6 @@ export default function Login() {
   // initial state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [login, setLogin] = useState(false);
   const token = cookies.get("TOKEN");
 
   const handleSubmit = (e) => {
@@ -45,7 +44,7 @@ export default function Login() {
   return (
     <div className="text-center">
       <h2>Welcome Warriors!</h2>
-      <img src="%PUBLIC_URL%/wclogo.jpeg"></img>
+      <img src="%PUBLIC_URL%/wclogo.jpeg" alt="west campus logo"></img>
       <Form style={{display: token ? 'none' : 'block' }} onSubmit={(e) => handleSubmit(e)}>
         {/* email */}
         <Form.Group controlId="formBasicEmail">
