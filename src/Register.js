@@ -4,7 +4,7 @@ import axios from "axios";
 
 export default function Register() {
   // initial state
-  const [email, setEmail] = useState("");
+  const [username, serUsername] = useState("");
   const [password, setPassword] = useState("");
   const [register, setRegister] = useState(false);
 
@@ -17,7 +17,7 @@ export default function Register() {
       method: "post",
       url: "https://filmshare-fd851c149ec7.herokuapp.com/register",
       data: {
-        email,
+        username,
         password,
       },
     };
@@ -36,15 +36,15 @@ export default function Register() {
     <>
       <h2>Register</h2>
       <Form onSubmit={(e) => handleSubmit(e)}>
-        {/* email */}
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
+        {/* username */}
+        <Form.Group>
+          <Form.Label>Username</Form.Label>
           <Form.Control
-            type="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter email"
+            type="text"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter username"
           />
         </Form.Group>
 

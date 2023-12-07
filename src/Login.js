@@ -6,7 +6,7 @@ const cookies = new Cookies();
 
 export default function Login() {
   // initial state
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const token = cookies.get("TOKEN");
 
@@ -19,7 +19,7 @@ export default function Login() {
       method: "post",
       url: "https://filmshare-fd851c149ec7.herokuapp.com/login",
       data: {
-        email,
+        username,
         password,
       },
     };
@@ -44,15 +44,15 @@ export default function Login() {
       <h2>Welcome, <b>Warriors!</b></h2>
       <img src="/wclogo.jpeg" alt="west campus logo"></img>
       <Form style={{display: token ? 'none' : 'block' }} onSubmit={(e) => handleSubmit(e)}>
-        {/* email */}
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
+        {/* username */}
+        <Form.Group>
+          <Form.Label>Username</Form.Label>
           <Form.Control
-            type="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter email"
+            type="text"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Enter username"
           />
         </Form.Group>
 
