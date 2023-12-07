@@ -4,7 +4,7 @@ import axios from "axios";
 
 export default function Register() {
   // initial state
-  const [username, serUsername] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [register, setRegister] = useState(false);
 
