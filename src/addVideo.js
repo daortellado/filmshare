@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import axios from "axios";
+import { useEffect } from 'react';
 
-export default function Video() {
+export default function Video(props) {
   // initial state
   const [videoname, setVideoName] = useState("");
   const [game, setGame] = useState("");
@@ -34,6 +35,10 @@ export default function Video() {
       });
   };
 
+  useEffect(() => {
+    setGame(props.gameselection);
+},[props.gameselection]);
+  
   return (
     <>
       <h2>Add Video</h2>
@@ -56,7 +61,7 @@ export default function Video() {
           <Form.Control
             type="text"
             name="game"
-            value={game}
+            value={props.dropdown ? props.gameselection : game}
             onChange={(e) => setGame(e.target.value)}
             placeholder="Enter game"
           />
