@@ -4,7 +4,7 @@ import Account from "./Account";
 import FreeComponent from "./FreeComponent";
 import AuthComponent from "./AuthComponent";
 import Cookies from "universal-cookie";
-import { jwtDecode } from 'jwt-decode' 
+import { jwtDecode } from 'jwt-decode'
 const cookies = new Cookies();
 
 function App() {
@@ -19,7 +19,8 @@ function App() {
     <Container>
       <Row>
         <Col className="text-center">
-          <h1><b>Film<i>Share</i></b></h1>
+          <h1 style={{ fontFamily: 'Unica One' }}>SQUADREEL</h1>
+          <img src="/squadreel.jpeg" alt="squadreel logo"></img>
           <h2>WCHS Women's Soccer</h2>
 
           <section id="navigation">
