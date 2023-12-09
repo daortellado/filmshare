@@ -21,7 +21,7 @@ function App() {
         <Col className="text-center">
           <h1 style={{ fontFamily: 'Unica One' }}>SQUADREEL</h1>
           <img src="/squadreel.png" alt="squadreel logo" class="responsive"></img>
-          <h2>WCHS Women's Soccer</h2>
+          <h5>WCHS Women's Soccer</h5>
           <section id="navigation">
             <a href="/">Home</a>
             <a href="/free">Admin</a>
