@@ -15,7 +15,7 @@ function App() {
   let [hidenav, setHideNav] = useState(false);
 
   function checkHideNav(){
-    if (url == '/')
+    if (url === '/')
     { setHideNav(true) }
     else
     { setHideNav(false) }
@@ -24,7 +24,7 @@ function App() {
   useEffect(() => {
     checkHideNav()
   }, []);
-  console.log(hidenav)
+
   function checkAdmin(){
   //read token for admin check
     if (token) {
