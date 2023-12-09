@@ -1,14 +1,30 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react"
 import { Container, Col, Row } from "react-bootstrap";
-import Account from "./Account";
-import FreeComponent from "./FreeComponent";
-import AuthComponent from "./AuthComponent";
+import Intro from "./Intro";
+import TeamHome from "./TeamHome";
+import AdminComponent from "./AdminComponent";
+import FilmRoomComponent from "./FilmRoomComponent";
 import Cookies from "universal-cookie";
 import { jwtDecode } from 'jwt-decode'
 const cookies = new Cookies();
 
 function App() {
   const token = cookies.get("TOKEN");
+  const url = String(useLocation().pathname);
+  let [hidenav, setHideNav] = useState(false);
+
+  function checkHideNav(){
+    if (url == '/')
+    { setHideNav(true) }
+    else
+    { setHideNav(false) }
+  }
+
+  useEffect(() => {
+    checkHideNav()
+  }, []);
+  console.log(hidenav)
   function checkAdmin(){
   //read token for admin check
     if (token) {
@@ -17,27 +33,28 @@ function App() {
   }
   return (
     <Container>
-      <Row>
+      <Row style={{display: hidenav ? 'none' : 'block' }}>
         <Col className="text-center">
-          <h1 style={{ fontFamily: 'Unica One' }}>SQUADREEL</h1>
+          <h1 style={{ fontFamily: 'Unica One' }}>SQUAD<i>REEL</i></h1>
           <img src="/squadreel.png" alt="squadreel logo" class="responsive"></img>
           <h5>WCHS Women's Soccer</h5>
           <section id="navigation">
-            <a href="/">Home</a>
-            <a href="/free">Admin</a>
-            <a href="/auth">Clip Collections</a>
+            <a href="/wchsws">Home</a>
+            <a href="/wchsws/admin">Admin</a>
+            <a href="/wchsws/filmroom">FilmRoom</a>
           </section>
         </Col>
       </Row>
 
       {/* create routes here */}
       <Routes>
-        <Route path="/" element={<Account/>} />
-        <Route path="/free"
-          element={checkAdmin()===true ? <FreeComponent /> : <Navigate replace to={"/"} />}
+        <Route path="/" element={<Intro />} />
+        <Route path="/wchsws" element={<TeamHome />} />
+        <Route path="/wchsws/admin"
+          element={checkAdmin()===true ? <AdminComponent /> : <Navigate replace to={"/"} />}
         />
-        <Route path="/auth"
-          element={token ? <AuthComponent /> : <Navigate replace to={"/"} />}
+        <Route path="/wchsws/filmroom"
+          element={token ? <FilmRoomComponent /> : <Navigate replace to={"/"} />}
         />
       </Routes>
     </Container>

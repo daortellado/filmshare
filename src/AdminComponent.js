@@ -9,7 +9,7 @@ const cookies = new Cookies();
 // get token generated on login
 const token = cookies.get("TOKEN");
 
-export default function FreeComponent() {
+export default function AdminComponent() {
   // set an initial state for the message we will receive after the API call
   const [videolist, setVideoList] = useState([]);
 

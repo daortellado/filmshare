@@ -9,7 +9,7 @@ const cookies = new Cookies();
 // get token generated on login
 const token = cookies.get("TOKEN");
 
-export default function AuthComponent() {
+export default function FilmRoomComponent() {
   // set an initial state for the message we will receive after the API call
   const [videolist, setVideoList] = useState([]);
   const [result, setResult] = useState([]);

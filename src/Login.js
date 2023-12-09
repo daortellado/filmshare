@@ -32,7 +32,7 @@ export default function Login() {
           path: "/",
         });
         // redirect user to the auth page
-        window.location.href = "/auth";
+        window.location.href = "/filmroom";
       })
       .catch((error) => {
         error = new Error();
