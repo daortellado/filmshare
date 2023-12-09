@@ -20,7 +20,7 @@ function App() {
       <Row>
         <Col className="text-center">
           <h1 style={{ fontFamily: 'Unica One' }}>SQUADREEL</h1>
-          <img src="/squadreel.jpeg" alt="squadreel logo"></img>
+          <img src="/squadreel.png" alt="squadreel logo"></img>
           <h2>WCHS Women's Soccer</h2>
 
           <section id="navigation">
