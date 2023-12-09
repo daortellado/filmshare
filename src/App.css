@@ -31,6 +31,10 @@
   padding-bottom: 1em;
 }
 
+.responsive { 
+  width: 25%; 
+  height: auto; 
+} 
 
 .player-wrapper {
   position: relative;
