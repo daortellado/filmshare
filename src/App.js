@@ -35,7 +35,7 @@ function App() {
     <Container>
       <Row style={{display: hidenav ? 'none' : 'block' }}>
         <Col className="text-center">
-          <h1 style={{ fontFamily: 'Unica One' }}>SQUAD<i>REEL</i></h1>
+          <h1 style={{ fontFamily: 'Unica One' }}><b>SQUAD</b><i>REEL</i></h1>
           <img src="/squadreel.png" alt="squadreel logo" class="responsive"></img>
           <h5>WCHS Women's Soccer</h5>
           <section id="navigation">

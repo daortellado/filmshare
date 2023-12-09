@@ -7,7 +7,7 @@ function Intro() {
     <header role="banner" className="ui-section-header">
       <div class="ui-layout-container">
         <div class="ui-section-header__layout ui-layout-flex">
-            <img src="squadreel_logo.png" style={{ maxWidth: 20 }} alt="logo"></img>
+            <img src="squadreel.png" class="responsive" alt="logo"></img>
         </div>
       </div>
     </header>
@@ -15,7 +15,7 @@ function Intro() {
       <section class="ui-section-hero">
         <div class="ui-layout-container">
             <div id="home" class="ui-layout-column-6 ui-layout-column-center">
-                <h1 style={{ fontFamily: 'Unica One' }}>SQUAD<i>REEL</i></h1>
+                <h1 style={{ fontFamily: 'Unica One' }}><b>SQUAD</b><i>REEL</i></h1>
                 <p class="ui-text-intro">Your online portal to team film.</p>
                 <p class="ui-text-intro"><b>Click</b> on your team below to get started:</p>
                 <div class="ui-component-cta ui-layout-flex">
