@@ -8,7 +8,7 @@ export default function TeamHome() {
       {/* Login */}
       <Col>
       </Col>
-      <Col>
+      <Col xs={8}>
         <Login />
       </Col>
       <Col>

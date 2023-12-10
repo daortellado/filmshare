@@ -45,7 +45,6 @@ function App() {
           </section>
         </Col>
       </Row>
-
       {/* create routes here */}
       <Routes>
         <Route path="/" element={<Intro />} />

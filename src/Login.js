@@ -40,7 +40,7 @@ export default function Login() {
   };
 
   return (
-    <div className="text-center">
+    <div className='text-center'>
       <h2>Welcome, <b>Warriors!</b></h2>
       <img src="/wclogo.jpeg" alt="west campus logo"></img>
       <Form style={{display: token ? 'none' : 'block' }} onSubmit={(e) => handleSubmit(e)}>
@@ -84,7 +84,7 @@ export default function Login() {
         ) : (
           <p className="text-danger">You Are Not Logged In</p>
         )}
-        <i>Review video of this season's games by clicking on "Clip Collections" above.</i>
+        <i>Review video of this season's games by clicking on "FilmRoom" above.</i>
       </div>
   );
 }
