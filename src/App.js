@@ -50,10 +50,10 @@ function App() {
         <Route path="/" element={<Intro />} />
         <Route path="/wchsws" element={<TeamHome />} />
         <Route path="/wchsws/admin"
-          element={checkAdmin()===true ? <AdminComponent /> : <Navigate replace to={"/"} />}
+          element={checkAdmin()===true ? <AdminComponent /> : <Navigate replace to={"/wchsws"} />}
         />
         <Route path="/wchsws/filmroom"
-          element={token ? <FilmRoomComponent /> : <Navigate replace to={"/"} />}
+          element={token ? <FilmRoomComponent /> : <Navigate replace to={"/wchsws"} />}
         />
       </Routes>
     </Container>
