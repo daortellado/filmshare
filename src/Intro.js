@@ -30,7 +30,7 @@ function Intro() {
       <div class="ui-layout-container">
         <div class="ui-section-footer__layout ui-layout-flex">
           <p class="ui-section-footer--copyright ui-text-note"><small>&copy; 2023 Kenavoga</small></p>
-          <a href="#" role="link" aria-label="#" class="ui-text-note"><small>Contact us</small></a>
+          <a href="mailto: daortellado@gmail.com" role="link" aria-label="#" class="ui-text-note"><small>Contact us</small></a>
         </div>
       </div>
     </footer>
