@@ -8,6 +8,7 @@ export default function Video(props) {
   const [videoname, setVideoName] = useState("");
   const [game, setGame] = useState("");
   const [link, setLink] = useState("");
+  const [tags, setTags] = useState("");
   const [registervideo, setRegisterVideo] = useState(false);
 
   const handleSubmit = (e) => {
@@ -21,7 +22,8 @@ export default function Video(props) {
       data: {
         videoname,
         game,
-        link
+        link,
+        tags
       },
     };
 
@@ -76,6 +78,18 @@ export default function Video(props) {
             value={link}
             onChange={(e) => setLink(e.target.value)}
             placeholder="Enter video link"
+          />
+        </Form.Group>
+
+         {/* tags */}
+        <Form.Group>
+          <Form.Label>Tags</Form.Label>
+          <Form.Control
+            type="text"
+            name="tags"
+            value={tags}
+            onChange={(e) => setTags(e.target.value.split(','))} // Split comma-separated values
+            placeholder="Enter tags separated by commas"
           />
         </Form.Group>
 

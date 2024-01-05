@@ -45,8 +45,20 @@ export default function FilmRoomComponent() {
     window.location.href = "/";
   }
 
+  //unique game extraction
+
   let games = videolist.map(a => a.game);
   let uniquegames = [...new Set(games)]
+  
+  //tag extraction
+
+  let allTags = []; // Collect all tags from videos
+
+  videolist.forEach(video => {
+    allTags.push(...video.tags); // Flatten tags into a single array
+  });
+
+  let uniqueTags = [...new Set(allTags)]; // Create a Set for deduplication
 
   return (
     <div className="text-center">
@@ -62,6 +74,17 @@ export default function FilmRoomComponent() {
     }}>
       {game}
       </button>
+      ))}
+      </p>
+      <h4>Or select a <b>tag</b> by clicking one of the buttons below:</h4>
+      <p>
+      {uniqueTags.map((tag) => (
+        <button class="btn btn-outline-light" value={tag} onClick={e => {
+          setResult(videolist.filter(video => video.tags.includes(tag)));
+          console.log(result);
+        }}>
+          {tag}
+        </button>
       ))}
       </p>
       {result.map((video) => (
