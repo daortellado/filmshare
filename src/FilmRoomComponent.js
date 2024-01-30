@@ -77,22 +77,26 @@ export default function FilmRoomComponent() {
 
   // Generate unique tags, categorize player tags, and create buttons:
   let uniqueTags = [];
-  let playerTags = [];
-  let otherTags = [];
+  let playerTags = new Set();
+  let otherTags = new Set();
 
   videolist.forEach(video => {
     video.tags.forEach(tag => {
       const normalizedTag = tag.trim().toLowerCase();
       if (playerNames.includes(normalizedTag)) {
-        playerTags.push(normalizedTag);
+        playerTags.add(normalizedTag); // Use Set for uniqueness
       } else {
-        otherTags.push(normalizedTag);
+        otherTags.add(normalizedTag); // Use Set for uniqueness
       }
       if (!uniqueTags.includes(normalizedTag)) {
         uniqueTags.push(normalizedTag);
       }
     });
   });
+
+  // Convert Sets to arrays and sort alphabetically
+  const uniquePlayerTags = [...playerTags].sort();
+  const uniqueOtherTags = [...otherTags].sort();
 
   return (
     <div className="text-center">
@@ -112,8 +116,8 @@ export default function FilmRoomComponent() {
       </p>
       <h4>Or select a <b>tag</b> by clicking one of the buttons below:</h4>
       <p>
-      <p>Players:</p>
-      {playerTags.map((tag) => (
+      <p><h5><i>Players</i></h5></p>
+      {uniquePlayerTags.map((tag) => (
         <button key={tag} class="btn btn-outline-light" value={tag} onClick={e => {
           setResult(videolist.filter(video => video.tags.some(videoTag => videoTag.trim().toLowerCase() === tag)));
           console.log(result);
@@ -122,8 +126,8 @@ export default function FilmRoomComponent() {
         </button>
       ))}
 
-      <p>Other Tags:</p>
-      {otherTags.map((tag) => (
+      <p><h5><i>Other Tags</i></h5></p>
+      {uniqueOtherTags.map((tag) => (
         <button key={tag} class="btn btn-outline-light" value={tag} onClick={e => {
           setResult(videolist.filter(video => video.tags.some(videoTag => videoTag.trim().toLowerCase() === tag)));
           console.log(result);
