@@ -80,7 +80,7 @@ export default function FilmRoomComponent() {
       <p>
       {uniqueTags.map((tag) => (
         <button class="btn btn-outline-light" value={tag} onClick={e => {
-          setResult(videolist.filter(video => video.tags.includes(tag)));
+          setResult(videolist.filter(video => video.tags.some(videoTag => videoTag.trim() === tag)));
           console.log(result);
         }}>
           {tag}
