@@ -50,20 +50,12 @@ export default function FilmRoomComponent() {
   let games = videolist.map(a => a.game);
   let uniquegames = [...new Set(games)]
   
-  //tag extraction
-
-  let allTags = []; // Collect all tags from videos
-
-  videolist.forEach(video => {
-    allTags.push(...video.tags); // Flatten tags into a single array
-  });
-
+  // Generate unique tags directly, handling normalization and uniqueness
   let uniqueTags = [];
-
-  videos.forEach(video => {
+  videolist.forEach(video => {
     video.tags.forEach(tag => {
-      const normalizedTag = tag.trim().toLowerCase(); // Normalize for consistency
-      if (!uniqueTags.includes(normalizedTag)) { // Check for uniqueness
+      const normalizedTag = tag.trim().toLowerCase();
+      if (!uniqueTags.includes(normalizedTag)) {
         uniqueTags.push(normalizedTag);
       }
     });
@@ -89,7 +81,7 @@ export default function FilmRoomComponent() {
       <p>
       {uniqueTags.map((tag) => (
         <button class="btn btn-outline-light" value={tag} onClick={e => {
-          setResult(videolist.filter(video => video.tags.some(videoTag => videoTag.trim().toLowerCase() === tag))); // Use normalized tags
+          setResult(videolist.filter(video => video.tags.some(videoTag => videoTag.trim().toLowerCase() === tag)));
           console.log(result);
         }}>
           {tag}
