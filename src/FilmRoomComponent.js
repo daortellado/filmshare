@@ -58,7 +58,16 @@ export default function FilmRoomComponent() {
     allTags.push(...video.tags); // Flatten tags into a single array
   });
 
-  let uniqueTags = [...new Set(allTags)]; // Create a Set for deduplication
+  let uniqueTags = [];
+
+  videos.forEach(video => {
+    video.tags.forEach(tag => {
+      const normalizedTag = tag.trim().toLowerCase(); // Normalize for consistency
+      if (!uniqueTags.includes(normalizedTag)) { // Check for uniqueness
+        uniqueTags.push(normalizedTag);
+      }
+    });
+  });
 
   return (
     <div className="text-center">
@@ -80,7 +89,7 @@ export default function FilmRoomComponent() {
       <p>
       {uniqueTags.map((tag) => (
         <button class="btn btn-outline-light" value={tag} onClick={e => {
-          setResult(videolist.filter(video => video.tags.some(videoTag => videoTag.trim() === tag)));
+          setResult(videolist.filter(video => video.tags.some(videoTag => videoTag.trim().toLowerCase() === tag))); // Use normalized tags
           console.log(result);
         }}>
           {tag}
