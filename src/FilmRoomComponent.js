@@ -51,10 +51,43 @@ export default function FilmRoomComponent() {
   let uniquegames = [...new Set(games)]
   
   // Generate unique tags directly, handling normalization and uniqueness
+  // Define the list of player names
+  const playerNames = [
+    "abbie",
+    "jaden",
+    "gabi",
+    "ella",
+    "brandi",
+    "amelia",
+    "sophia",
+    "maya",
+    "emily",
+    "z",
+    "sierra",
+    "annya",
+    "audrey",
+    "jane",
+    "liliana",
+    "mila",
+    "alison",
+    "madison",
+    "aylin",
+    "jhansi",
+  ];
+
+  // Generate unique tags, categorize player tags, and create buttons:
   let uniqueTags = [];
+  let playerTags = [];
+  let otherTags = [];
+
   videolist.forEach(video => {
     video.tags.forEach(tag => {
       const normalizedTag = tag.trim().toLowerCase();
+      if (playerNames.includes(normalizedTag)) {
+        playerTags.push(normalizedTag);
+      } else {
+        otherTags.push(normalizedTag);
+      }
       if (!uniqueTags.includes(normalizedTag)) {
         uniqueTags.push(normalizedTag);
       }
@@ -79,8 +112,19 @@ export default function FilmRoomComponent() {
       </p>
       <h4>Or select a <b>tag</b> by clicking one of the buttons below:</h4>
       <p>
-      {uniqueTags.map((tag) => (
-        <button class="btn btn-outline-light" value={tag} onClick={e => {
+      <p>Players:</p>
+      {playerTags.map((tag) => (
+        <button key={tag} class="btn btn-outline-light" value={tag} onClick={e => {
+          setResult(videolist.filter(video => video.tags.some(videoTag => videoTag.trim().toLowerCase() === tag)));
+          console.log(result);
+        }}>
+          {tag}
+        </button>
+      ))}
+
+      <p>Other Tags:</p>
+      {otherTags.map((tag) => (
+        <button key={tag} class="btn btn-outline-light" value={tag} onClick={e => {
           setResult(videolist.filter(video => video.tags.some(videoTag => videoTag.trim().toLowerCase() === tag)));
           console.log(result);
         }}>
