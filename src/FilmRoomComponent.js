@@ -53,6 +53,7 @@ export default function FilmRoomComponent() {
   // Generate unique tags directly, handling normalization and uniqueness
   // Define the list of player names
   const playerNames = [
+    "allie",
     "abbie",
     "jaden",
     "gabi",
@@ -69,7 +70,6 @@ export default function FilmRoomComponent() {
     "jane",
     "liliana",
     "mila",
-    "alison",
     "madison",
     "aylin",
     "jhansi",

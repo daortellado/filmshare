@@ -2,20 +2,24 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Register from "./Register";
 import Video from "./addVideo";
+import EditVideo from "./editVideo";
 import { Col, Row } from "react-bootstrap";
 import Cookies from "universal-cookie";
+
 const cookies = new Cookies();
 
-// get token generated on login
 const token = cookies.get("TOKEN");
+console.log("Retrieved token:", token);
 
 export default function AdminComponent() {
-  // set an initial state for the message we will receive after the API call
   const [videolist, setVideoList] = useState([]);
+  const [gameselection, setGameSelection] = useState("");
+  const [dropdown, setDropdown] = useState(false);
+  const [videoNames, setVideoNames] = useState([]);
+  const [selectedVideo, setSelectedVideo] = useState(null); // Store full video object
+  const [isEdit, setIsEdit] = useState(false);
 
-  // useEffect automatically executes once the page is fully loaded
   useEffect(() => {
-    // set configurations for the API call here
     const configuration = {
       method: "get",
       url: "https://filmshare-fd851c149ec7.herokuapp.com/api/video/",
@@ -24,46 +28,78 @@ export default function AdminComponent() {
       },
     };
 
-    // make the API call
     axios(configuration)
       .then((result) => {
-        // assign the message in our result to the message we initialized above
         setVideoList(result.data);
-        console.log();
       })
       .catch((error) => {
-        error = new Error();
+        console.error(error);
       });
   }, []);
 
-  let games = videolist.map(a => a.game);
-  let uniquegames = [...new Set(games)]
-  const [gameselection, setGameSelection] = useState("")
-  const [dropdown, setDropdown] = useState(false)
-  let handleGameChange = (e) => {
-    setGameSelection(e.target.value)
-    setDropdown(true)
-  }
+
+  // Extract unique games
+  let games = videolist.map((a) => a.game);
+  let uniquegames = [...new Set(games)];
+
+  // Handle game selection change
+  const handleGameChange = (e) => {
+    setGameSelection(e.target.value);
+    setDropdown(true); // Show video selection dropdown
+  
+    // If a game is selected, filter video names
+    if (e.target.value) {
+      const filteredVideos = videolist.filter((video) => video.game === e.target.value);
+      const filteredVideoNames = filteredVideos.map((video) => video.videoname);
+      setVideoNames(filteredVideoNames);
+      setSelectedVideo(null); // Reset selected video object (instead of selectedVideoName)
+    } else {
+      setVideoNames([]); // Clear video names if no game is selected
+    }
+  };
+
+  // Handle video name selection
+  const handleVideoNameChange = (e) => {
+    const selectedVideo = videolist.find((video) => video.videoname === e.target.value);
+    setSelectedVideo(selectedVideo); // Set the full video object
+    setIsEdit(true); // Set edit mode
+  };
 
   return (
     <div>
-            {/* Register */}
-        <Row>
+      {/* Register */}
+      <Row>
         <Col xs={12} sm={12} md={6} lg={6}>
-            <Register />
+          <Register />
         </Col>
-          {/* Add Video */}
+        {/* Add/Edit Video */}
         <Col xs={12} sm={12} md={6} lg={6}>
-    <select onChange={handleGameChange}> 
-        {/* Creating the default / starting option for our 
-          dropdown.
-         */}
-        <option> -- Choose an existing game -- </option>
-      {uniquegames.map((gameselection) => <option value={gameselection}>{gameselection}</option>)}
-    </select>
-            <Video gameselection={gameselection} dropdown={dropdown}/>
+          <select onChange={handleGameChange}>
+            {/* Default option */}
+            <option>-- Choose an existing game --</option>
+            {uniquegames.map((gameselection) => (
+              <option key={gameselection} value={gameselection}>
+                {gameselection}
+              </option>
+            ))}
+          </select>
+          {dropdown && (
+            <select value={selectedVideo?.videoname} onChange={handleVideoNameChange}>
+              <option value="">-- Select a video --</option>
+              {videoNames.map((videoName) => (
+                <option key={videoName} value={videoName}>
+                  {videoName}
+                </option>
+              ))}
+            </select>
+          )}
+          {isEdit ? (
+          <EditVideo video={selectedVideo} /> // Pass the selectedVideo object as a prop
+            ) : (
+          <Video gameselection={gameselection} dropdown={dropdown} />
+          )}
         </Col>
-        </Row>
+      </Row>
     </div>
-  );
+  );  
 }
