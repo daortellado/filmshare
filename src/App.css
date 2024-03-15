@@ -56,3 +56,38 @@
   }
 }
 
+.create-squadreel-btn {
+  /* Add your desired styles here */
+  background-color: #007bff; /* Example blue background */
+  color: white; /* Example white text */
+  border-color: #007bff; /* Example blue border */
+  padding: 10px 20px; /* Example padding */
+  font-weight: bold; /* Example bold text */
+}
+
+.custom-checkbox {
+  /* Adjust size as needed */
+  width: 20px;
+  height: 20px;
+  appearance: none; /* Remove default checkbox appearance */
+  background-color: #fff; /* Checkbox background color */
+  border: 2px solid #ccc; /* Checkbox border */
+  border-radius: 4px; /* Checkbox border radius */
+  cursor: pointer; /* Allow hover effect */
+}
+
+.custom-checkbox:checked {
+  background-color: #4CAF50; /* Checked checkbox background color */
+  border-color: #4CAF50; /* Checked checkbox border color */
+  /* Add a checkmark using pseudo-element */
+  &::after {
+    content: "";
+    display: block;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    margin: auto;
+  }
+}
