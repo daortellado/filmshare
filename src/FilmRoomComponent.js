@@ -257,7 +257,7 @@ export default function FilmRoomComponent() {
       Clear All Selections
     </Button>
           <h4>Selected Videos:</h4>
-          <ul>
+          <ul class="no-bullets">
             {selectedClips.map((video) => (
               <li key={video.link}>{video.videoname} ({video.game})</li>
             ))}
@@ -304,6 +304,7 @@ export default function FilmRoomComponent() {
                         : [...prev, video]
                     );
                   }}
+                  className="custom-checkbox"
                 />
               </div>
               <div className="player-wrapper">

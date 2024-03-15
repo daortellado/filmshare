@@ -91,3 +91,9 @@
     margin: auto;
   }
 }
+
+.no-bullets {
+  list-style-type: none;
+  padding: 0;
+  margin: 0; /* Optional for spacing adjustments */
+}
