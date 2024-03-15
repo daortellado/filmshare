@@ -305,6 +305,7 @@ export default function FilmRoomComponent() {
                     );
                   }}
                   className="custom-checkbox"
+                  style={{ margin: '0 auto' }}
                 />
               </div>
               <div className="player-wrapper">
