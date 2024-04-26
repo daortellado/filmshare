@@ -153,11 +153,6 @@ export default function FilmRoomComponent() {
 
   return (
     <div className="text-center">
-      <div className="text-center mb-4">
-        <Button variant="primary" onClick={handleApplyFilters}>
-          Apply Filters
-        </Button>
-      </div>
       <h4>Select a <b>game</b> by clicking one of the buttons below:</h4>
       <div className="App">
         <p>
@@ -184,7 +179,7 @@ export default function FilmRoomComponent() {
               {tag}
             </button>
           ))}
-
+  
           <p><h5><i>Other Tags</i></h5></p>
           {uniqueOtherTags.map((tag) => (
             <button
@@ -197,6 +192,11 @@ export default function FilmRoomComponent() {
             </button>
           ))}
         </p>
+        <div className="text-center mb-4">
+          <Button variant="primary" onClick={handleApplyFilters}>
+            Apply Filters
+          </Button>
+        </div>
         {result.length === 0 && (
           <p>Click "Apply Filters" to see the video list.</p>
         )}
@@ -268,5 +268,5 @@ export default function FilmRoomComponent() {
         Logout
       </Button>
     </div>
-  );
+  );  
 }
