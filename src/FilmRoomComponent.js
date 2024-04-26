@@ -153,6 +153,12 @@ export default function FilmRoomComponent() {
 
   return (
     <div className="text-center">
+      <div className="text-center mb-4">
+        <Button variant="primary" onClick={handleApplyFilters}>
+          Apply Filters
+        </Button>
+      </div>
+      <p><em>Click "Apply Filters" to see the video list</em> ⬆️</p>
       <h4>Select a <b>game</b> by clicking one of the buttons below:</h4>
       <div className="App">
         <p>
@@ -192,14 +198,6 @@ export default function FilmRoomComponent() {
             </button>
           ))}
         </p>
-        <div className="text-center mb-4">
-          <Button variant="primary" onClick={handleApplyFilters}>
-            Apply Filters
-          </Button>
-        </div>
-        {result.length === 0 && (
-          <p>Click "Apply Filters" to see the video list.</p>
-        )}
         {result.length > 0 && (
           <>
             <Button variant="outline-primary" size="sm" onClick={() => setSelectedClips(result)}>
@@ -269,4 +267,4 @@ export default function FilmRoomComponent() {
       </Button>
     </div>
   );  
-}
+}  
