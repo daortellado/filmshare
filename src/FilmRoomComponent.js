@@ -44,26 +44,24 @@ export default function FilmRoomComponent() {
   let uniquegames = [...new Set(games)];
 
   const playerNames = [
-    "allie",
-    "abbie",
+    "madeleine",
+    "madison g",
     "jaden",
     "gabi",
     "ella",
     "brandi",
-    "amelia",
-    "sophia",
-    "maya",
+    "taige",
+    "melia",
+    "kate",
     "emily",
     "z",
     "sierra",
     "annya",
     "audrey",
-    "jane",
+    "pearl",
     "liliana",
     "mila",
-    "madison",
-    "aylin",
-    "jhansi",
+    "madison"
   ];
 
   let uniqueTags = [];

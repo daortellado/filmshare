@@ -7,17 +7,17 @@ import { Col, Row } from "react-bootstrap";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
-
 const token = cookies.get("TOKEN");
-console.log("Retrieved token:", token);
 
 export default function AdminComponent() {
   const [videolist, setVideoList] = useState([]);
   const [gameselection, setGameSelection] = useState("");
   const [dropdown, setDropdown] = useState(false);
   const [videoNames, setVideoNames] = useState([]);
-  const [selectedVideo, setSelectedVideo] = useState(null); // Store full video object
+  const [selectedVideo, setSelectedVideo] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
+  const [seasonName, setSeasonName] = useState('');
+  const [showArchiveInput, setShowArchiveInput] = useState(false);
 
   useEffect(() => {
     const configuration = {
@@ -37,45 +37,58 @@ export default function AdminComponent() {
       });
   }, []);
 
+  const handleArchive = async () => {
+    if (!seasonName) return;
+    
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'https://filmshare-fd851c149ec7.herokuapp.com/api/archive-season',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: { seasonName }
+      });
 
-  // Extract unique games
+      if (response.status === 200) {
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error archiving season:', error);
+    }
+  };
+
   let games = videolist.map((a) => a.game);
   let uniquegames = [...new Set(games)];
 
-  // Handle game selection change
   const handleGameChange = (e) => {
     setGameSelection(e.target.value);
-    setDropdown(true); // Show video selection dropdown
+    setDropdown(true);
   
-    // If a game is selected, filter video names
     if (e.target.value) {
       const filteredVideos = videolist.filter((video) => video.game === e.target.value);
       const filteredVideoNames = filteredVideos.map((video) => video.videoname);
       setVideoNames(filteredVideoNames);
-      setSelectedVideo(null); // Reset selected video object (instead of selectedVideoName)
+      setSelectedVideo(null);
     } else {
-      setVideoNames([]); // Clear video names if no game is selected
+      setVideoNames([]);
     }
   };
 
-  // Handle video name selection
   const handleVideoNameChange = (e) => {
     const selectedVideo = videolist.find((video) => video.videoname === e.target.value);
-    setSelectedVideo(selectedVideo); // Set the full video object
-    setIsEdit(true); // Set edit mode
+    setSelectedVideo(selectedVideo);
+    setIsEdit(true);
   };
 
   return (
     <div>
-      {/* Register */}
       <Row>
         <Col xs={12} sm={12} md={6} lg={6}>
           <Register />
         </Col>
-        {/* Add/Edit Video */}
         <Col xs={12} sm={12} md={6} lg={6}>
           <select onChange={handleGameChange}>
-            {/* Default option */}
             <option>-- Choose an existing game --</option>
             {uniquegames.map((gameselection) => (
               <option key={gameselection} value={gameselection}>
@@ -94,12 +107,40 @@ export default function AdminComponent() {
             </select>
           )}
           {isEdit ? (
-          <EditVideo video={selectedVideo} /> // Pass the selectedVideo object as a prop
-            ) : (
-          <Video gameselection={gameselection} dropdown={dropdown} />
+            <EditVideo video={selectedVideo} />
+          ) : (
+            <Video gameselection={gameselection} dropdown={dropdown} />
+          )}
+        </Col>
+      </Row>
+      <Row className="mt-4">
+        <Col>
+          {!showArchiveInput ? (
+            <button 
+              onClick={() => setShowArchiveInput(true)}
+              className="btn btn-warning"
+            >
+              Archive Current Season
+            </button>
+          ) : (
+            <div className="d-flex gap-2">
+              <input
+                type="text"
+                value={seasonName}
+                onChange={(e) => setSeasonName(e.target.value)}
+                placeholder="Enter season name (e.g. 23-24)"
+                className="form-control w-auto"
+              />
+              <button 
+                onClick={handleArchive}
+                className="btn btn-success"
+              >
+                Confirm
+              </button>
+            </div>
           )}
         </Col>
       </Row>
     </div>
-  );  
+  );
 }
