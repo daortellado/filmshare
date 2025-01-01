@@ -15,8 +15,11 @@ export default function FilmRoomComponent() {
   const [isLoading, setIsLoading] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [selectedFilters, setSelectedFilters] = useState({ game: "", tags: [] });
-  const [tempFilters, setTempFilters] = useState({ game: "", tags: [] }); // Temporary filter state
+  const [tempFilters, setTempFilters] = useState({ game: "", tags: [] });
+  const [seasons, setSeasons] = useState(['current']);
+  const [selectedSeason, setSelectedSeason] = useState('current');
 
+  // Fetch available seasons
   useEffect(() => {
     const configuration = {
       method: "get",
@@ -28,12 +31,38 @@ export default function FilmRoomComponent() {
 
     axios(configuration)
       .then((result) => {
+        console.log("All videos:", result.data);
+        const uniqueSeasons = [...new Set(result.data.map(video => video.season))].sort();
+        console.log("Unique seasons found:", uniqueSeasons);
+        setSeasons(uniqueSeasons);
+      })
+      .catch((error) => {
+        console.error("Error fetching seasons:", error);
+      });
+  }, []);
+
+  // Fetch videos for selected season
+  useEffect(() => {
+    const configuration = {
+      method: "get",
+      url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/?season=${selectedSeason}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    axios(configuration)
+      .then((result) => {
         setVideoList(result.data);
+        setResult([]); // Clear results when changing seasons
+        setSelectedClips([]); // Clear selected clips when changing seasons
+        setTempFilters({ game: "", tags: [] }); // Reset filters when changing seasons
+        setSelectedFilters({ game: "", tags: [] }); // Reset applied filters when changing seasons
       })
       .catch((error) => {
         console.error("Error fetching videos:", error);
       });
-  }, []);
+  }, [selectedSeason]);
 
   const logout = () => {
     cookies.remove("TOKEN", { path: "/" });
@@ -102,31 +131,24 @@ export default function FilmRoomComponent() {
   }, [selectedFilters]);
 
   const handleApplyFilters = () => {
-    setSelectedFilters({ ...tempFilters }); // Apply the temporary filters
+    setSelectedFilters({ ...tempFilters });
   };
 
   async function handleDownload() {
     setIsLoading(true);
-
-    // Extract the links of the selected clips
     const playlistContent = selectedClips.map((clip) => clip.link);
 
     try {
-      // Data to send to the backend
       const requestData = {
-        playlistContent, // Selected clips
-        userEmail, // User's email
+        playlistContent,
+        userEmail,
       };
 
-      // Send the data to the backend
       const response = await axios.post('https://filmshare-fd851c149ec7.herokuapp.com/create-mysquadreel', requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      // Handle the response if needed
-
     } catch (error) {
       console.error("Error creating job:", error);
     } finally {
@@ -138,7 +160,7 @@ export default function FilmRoomComponent() {
     setTempFilters((prevFilters) => {
       if (filterType === "game") {
         return prevFilters.game === value
-          ? { ...prevFilters, game: "" } // Toggle off the game filter if already selected
+          ? { ...prevFilters, game: "" }
           : { ...prevFilters, game: value };
       } else {
         const newTags = prevFilters.tags.includes(value)
@@ -151,6 +173,20 @@ export default function FilmRoomComponent() {
 
   return (
     <div className="text-center">
+      <div className="season-selector mb-4">
+        <select 
+          value={selectedSeason} 
+          onChange={(e) => setSelectedSeason(e.target.value)}
+          className="form-select w-auto mx-auto"
+        >
+          {seasons.map(season => (
+            <option key={season} value={season}>
+              {season === 'current' ? 'Current Season' : `Season ${season}`}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="text-center mb-4">
         <Button variant="primary" onClick={handleApplyFilters}>
           Apply Filters
@@ -162,6 +198,7 @@ export default function FilmRoomComponent() {
         <p>
           {uniquegames.map((game) => (
             <button
+              key={game}
               className={`btn btn-outline-light ${tempFilters.game === game ? 'active' : ''}`}
               value={game}
               onClick={() => handleFilterChange("game", game)}
@@ -221,7 +258,7 @@ export default function FilmRoomComponent() {
                 variant="primary"
                 onClick={handleDownload}
                 className="create-squadreel-btn"
-                disabled={!selectedClips.length || isLoading} // Disable button when isLoading is true
+                disabled={!selectedClips.length || isLoading}
               >
                 {isLoading ? (
                   "MySquadReel is processing - check your email in a few minutes for your download link!"
@@ -234,7 +271,7 @@ export default function FilmRoomComponent() {
         )}
         <p>
           {result.map((video) => (
-            <div className="paddeddiv">
+            <div key={video._id} className="paddeddiv">
               <div className="card">
                 <b>{video.videoname}</b>
                 <i>{video.game}</i>
@@ -259,10 +296,9 @@ export default function FilmRoomComponent() {
           ))}
         </p>
       </div>
-      {/* Logout button */}
       <Button type="submit" variant="danger" onClick={logout}>
         Logout
       </Button>
     </div>
   );  
-}  
+}
