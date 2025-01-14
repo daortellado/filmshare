@@ -32,21 +32,24 @@ export default function EditVideo({ video }) {
     try {
       const configuration = {
         method: "put",
-        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${video._id}`,
+        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(videoData.videoname)}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        data: videoData
+        data: {
+          link: videoData.link,
+          tags: videoData.tags
+        }
       };
 
-      const result = await axios(configuration);
+      await axios(configuration);
       setUpdateStatus("Video updated successfully!");
       
       // Reset status after 3 seconds
       setTimeout(() => setUpdateStatus(""), 3000);
     } catch (error) {
-      setUpdateStatus("Error updating video");
       console.error("Error updating video:", error);
+      setUpdateStatus("Error updating video. Please try again.");
     }
   };
 
@@ -61,7 +64,7 @@ export default function EditVideo({ video }) {
   if (!video) return null;
 
   return (
-    <div className="mt-4 p-4 border rounded">
+    <div className="mt-4">
       <h3 className="mb-4">Edit Video</h3>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
@@ -69,7 +72,6 @@ export default function EditVideo({ video }) {
           <Form.Control
             type="text"
             value={videoData.videoname}
-            onChange={(e) => setVideoData(prev => ({ ...prev, videoname: e.target.value }))}
             disabled
           />
         </Form.Group>
@@ -79,7 +81,6 @@ export default function EditVideo({ video }) {
           <Form.Control
             type="text"
             value={videoData.game}
-            onChange={(e) => setVideoData(prev => ({ ...prev, game: e.target.value }))}
             disabled
           />
         </Form.Group>
@@ -90,7 +91,7 @@ export default function EditVideo({ video }) {
             type="text"
             value={videoData.link}
             onChange={(e) => setVideoData(prev => ({ ...prev, link: e.target.value }))}
-            disabled
+            placeholder="Enter video link"
           />
         </Form.Group>
 
@@ -104,7 +105,7 @@ export default function EditVideo({ video }) {
           />
         </Form.Group>
 
-        <Button variant="primary" type="submit">
+        <Button variant="primary" type="submit" className="w-100">
           Update Video
         </Button>
 
