@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Register from "./Register";
 import Video from "./addVideo";
-import EditVideo from "./editVideo";
+import EditVideo from "./EditVideo";
 import { Col, Row, Button, Form, Container } from "react-bootstrap";
 import Cookies from "universal-cookie";
 
@@ -15,7 +15,6 @@ export default function AdminComponent() {
   const [dropdown, setDropdown] = useState(false);
   const [videoNames, setVideoNames] = useState([]);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const [isEdit, setIsEdit] = useState(false);
   const [seasonName, setSeasonName] = useState('');
   const [showArchiveInput, setShowArchiveInput] = useState(false);
   const [mode, setMode] = useState('add'); // 'add' or 'edit'
@@ -63,17 +62,20 @@ export default function AdminComponent() {
   let uniquegames = [...new Set(games)];
 
   const handleGameChange = (e) => {
-    setGameSelection(e.target.value);
+    const selectedGame = e.target.value;
+    setGameSelection(selectedGame);
     setDropdown(true);
-  
-    if (e.target.value) {
-      const filteredVideos = videolist.filter((video) => video.game === e.target.value);
-      const filteredVideoNames = filteredVideos.map((video) => video.videoname);
-      setVideoNames(filteredVideoNames);
-      setSelectedVideo(null);
-    } else {
-      setVideoNames([]);
-      setSelectedVideo(null);
+
+    if (mode === 'edit') {
+      if (selectedGame) {
+        const filteredVideos = videolist.filter((video) => video.game === selectedGame);
+        const filteredVideoNames = filteredVideos.map((video) => video.videoname);
+        setVideoNames(filteredVideoNames);
+        setSelectedVideo(null);
+      } else {
+        setVideoNames([]);
+        setSelectedVideo(null);
+      }
     }
   };
 
@@ -117,39 +119,41 @@ export default function AdminComponent() {
               </div>
             </div>
 
-            {/* Game and Video Selection (shown in edit mode) */}
-            {mode === 'edit' && (
-              <div className="mb-4">
+            {/* Common Game Selection for both modes */}
+            <div className="mb-4">
+              <Form.Group className="mb-3 text-center">
+                <Form.Label>Select Game</Form.Label>
+                <Form.Select 
+                  onChange={handleGameChange} 
+                  value={gameselection}
+                >
+                  <option value="">-- Choose a game --</option>
+                  {uniquegames.map((game) => (
+                    <option key={game} value={game}>
+                      {game}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+
+              {/* Video Selection (only in edit mode) */}
+              {mode === 'edit' && dropdown && (
                 <Form.Group className="mb-3 text-center">
-                  <Form.Label>Select Game</Form.Label>
-                  <Form.Select onChange={handleGameChange} value={gameselection}>
-                    <option value="">-- Choose a game --</option>
-                    {uniquegames.map((game) => (
-                      <option key={game} value={game}>
-                        {game}
+                  <Form.Label>Select Video</Form.Label>
+                  <Form.Select
+                    value={selectedVideo?.videoname || ''}
+                    onChange={handleVideoNameChange}
+                  >
+                    <option value="">-- Select a video --</option>
+                    {videoNames.map((videoName) => (
+                      <option key={videoName} value={videoName}>
+                        {videoName}
                       </option>
                     ))}
                   </Form.Select>
                 </Form.Group>
-
-                {dropdown && (
-                  <Form.Group className="mb-3 text-center">
-                    <Form.Label>Select Video</Form.Label>
-                    <Form.Select
-                      value={selectedVideo?.videoname || ''}
-                      onChange={handleVideoNameChange}
-                    >
-                      <option value="">-- Select a video --</option>
-                      {videoNames.map((videoName) => (
-                        <option key={videoName} value={videoName}>
-                          {videoName}
-                        </option>
-                      ))}
-                    </Form.Select>
-                  </Form.Group>
-                )}
-              </div>
-            )}
+              )}
+            </div>
 
             {/* Video Components */}
             {mode === 'add' ? (
