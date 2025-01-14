@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Register from "./Register";
 import Video from "./addVideo";
-import EditVideo from "./EditVideo";
+import EditVideo from "./editVideo";
 import { Col, Row, Button, Form, Container } from "react-bootstrap";
 import Cookies from "universal-cookie";
 
