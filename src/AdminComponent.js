@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Register from "./Register";
 import Video from "./addVideo";
-import EditVideo from "./editVideo";
-import { Col, Row } from "react-bootstrap";
+import EditVideo from "./EditVideo";
+import { Col, Row, Button, Form, Container } from "react-bootstrap";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
@@ -18,6 +18,7 @@ export default function AdminComponent() {
   const [isEdit, setIsEdit] = useState(false);
   const [seasonName, setSeasonName] = useState('');
   const [showArchiveInput, setShowArchiveInput] = useState(false);
+  const [mode, setMode] = useState('add'); // 'add' or 'edit'
 
   useEffect(() => {
     const configuration = {
@@ -72,75 +73,123 @@ export default function AdminComponent() {
       setSelectedVideo(null);
     } else {
       setVideoNames([]);
+      setSelectedVideo(null);
     }
   };
 
   const handleVideoNameChange = (e) => {
     const selectedVideo = videolist.find((video) => video.videoname === e.target.value);
     setSelectedVideo(selectedVideo);
-    setIsEdit(true);
+  };
+
+  const handleModeChange = (newMode) => {
+    setMode(newMode);
+    setGameSelection("");
+    setDropdown(false);
+    setVideoNames([]);
+    setSelectedVideo(null);
   };
 
   return (
-    <div>
-      <Row>
+    <Container>
+      <Row className="justify-content-center">
         <Col xs={12} sm={12} md={6} lg={6}>
           <Register />
         </Col>
         <Col xs={12} sm={12} md={6} lg={6}>
-          <select onChange={handleGameChange}>
-            <option>-- Choose an existing game --</option>
-            {uniquegames.map((gameselection) => (
-              <option key={gameselection} value={gameselection}>
-                {gameselection}
-              </option>
-            ))}
-          </select>
-          {dropdown && (
-            <select value={selectedVideo?.videoname} onChange={handleVideoNameChange}>
-              <option value="">-- Select a video --</option>
-              {videoNames.map((videoName) => (
-                <option key={videoName} value={videoName}>
-                  {videoName}
-                </option>
-              ))}
-            </select>
-          )}
-          {isEdit ? (
-            <EditVideo video={selectedVideo} />
-          ) : (
-            <Video gameselection={gameselection} dropdown={dropdown} />
-          )}
+          <div className="admin-controls">
+            {/* Mode Selection */}
+            <div className="mb-4">
+              <h3 className="mb-3">Video Management</h3>
+              <div className="d-flex justify-content-center gap-2">
+                <Button
+                  variant={mode === 'add' ? 'primary' : 'outline-primary'}
+                  onClick={() => handleModeChange('add')}
+                >
+                  Add Video
+                </Button>
+                <Button
+                  variant={mode === 'edit' ? 'primary' : 'outline-primary'}
+                  onClick={() => handleModeChange('edit')}
+                >
+                  Edit Video
+                </Button>
+              </div>
+            </div>
+
+            {/* Game and Video Selection (shown in edit mode) */}
+            {mode === 'edit' && (
+              <div className="mb-4">
+                <Form.Group className="mb-3 text-center">
+                  <Form.Label>Select Game</Form.Label>
+                  <Form.Select onChange={handleGameChange} value={gameselection}>
+                    <option value="">-- Choose a game --</option>
+                    {uniquegames.map((game) => (
+                      <option key={game} value={game}>
+                        {game}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </Form.Group>
+
+                {dropdown && (
+                  <Form.Group className="mb-3 text-center">
+                    <Form.Label>Select Video</Form.Label>
+                    <Form.Select
+                      value={selectedVideo?.videoname || ''}
+                      onChange={handleVideoNameChange}
+                    >
+                      <option value="">-- Select a video --</option>
+                      {videoNames.map((videoName) => (
+                        <option key={videoName} value={videoName}>
+                          {videoName}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
+                )}
+              </div>
+            )}
+
+            {/* Video Components */}
+            {mode === 'add' ? (
+              <Video gameselection={gameselection} dropdown={dropdown} />
+            ) : (
+              selectedVideo && <EditVideo video={selectedVideo} />
+            )}
+          </div>
         </Col>
       </Row>
-      <Row className="mt-4">
-        <Col>
+
+      {/* Archive Season Section */}
+      <Row className="mt-4 justify-content-center">
+        <Col className="text-center">
           {!showArchiveInput ? (
-            <button 
+            <Button 
+              variant="warning"
               onClick={() => setShowArchiveInput(true)}
-              className="btn btn-warning"
             >
               Archive Current Season
-            </button>
+            </Button>
           ) : (
-            <div className="d-flex gap-2">
-              <input
+            <div className="d-flex justify-content-center gap-2">
+              <Form.Control
                 type="text"
                 value={seasonName}
                 onChange={(e) => setSeasonName(e.target.value)}
                 placeholder="Enter season name (e.g. 23-24)"
-                className="form-control w-auto"
+                className="w-auto"
               />
-              <button 
+              <Button 
+                variant="success"
                 onClick={handleArchive}
-                className="btn btn-success"
               >
                 Confirm
-              </button>
+              </Button>
             </div>
           )}
         </Col>
       </Row>
-    </div>
+    </Container>
   );
 }

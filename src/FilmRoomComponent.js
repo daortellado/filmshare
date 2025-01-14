@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Form, Container, Row, Col, Modal, Pagination } from "react-bootstrap";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import ReactPlayer from "react-player";
@@ -7,6 +7,37 @@ import "./App.css";
 
 const cookies = new Cookies();
 const token = cookies.get("TOKEN");
+const InfoModal = ({ show, handleClose }) => {
+  return (
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>How to Use FilmShare</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <h5>Viewing Videos:</h5>
+        <ol>
+          <li>Select a game from the dropdown menu</li>
+          <li>Choose any relevant player or category tags</li>
+          <li>Click "Apply Filters" to see your videos</li>
+        </ol>
+
+        <h5>Creating Your SquadReel:</h5>
+        <ol>
+          <li>After filtering videos, click "Create MySquadReel"</li>
+          <li>Select the checkboxes next to the videos you want to include</li>
+          <li>Enter your email address</li>
+          <li>Click "Create MySquadReel" button</li>
+          <li>Check your email in a few minutes for your compilation!</li>
+        </ol>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Close
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
 
 export default function FilmRoomComponent() {
   const [videolist, setVideoList] = useState([]);
@@ -18,6 +49,11 @@ export default function FilmRoomComponent() {
   const [tempFilters, setTempFilters] = useState({ game: "", tags: [] });
   const [seasons, setSeasons] = useState(['current']);
   const [selectedSeason, setSelectedSeason] = useState('current');
+  const [showCreateSquadReel, setShowCreateSquadReel] = useState(false);
+  const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const videosPerPage = 9; // Show 9 videos per page (3x3 grid)
 
   // Fetch available seasons
   useEffect(() => {
@@ -31,9 +67,7 @@ export default function FilmRoomComponent() {
 
     axios(configuration)
       .then((result) => {
-        console.log("All videos:", result.data);
         const uniqueSeasons = [...new Set(result.data.map(video => video.season))].sort();
-        console.log("Unique seasons found:", uniqueSeasons);
         setSeasons(uniqueSeasons);
       })
       .catch((error) => {
@@ -54,10 +88,11 @@ export default function FilmRoomComponent() {
     axios(configuration)
       .then((result) => {
         setVideoList(result.data);
-        setResult([]); // Clear results when changing seasons
-        setSelectedClips([]); // Clear selected clips when changing seasons
-        setTempFilters({ game: "", tags: [] }); // Reset filters when changing seasons
-        setSelectedFilters({ game: "", tags: [] }); // Reset applied filters when changing seasons
+        setResult([]);
+        setSelectedClips([]);
+        setTempFilters({ game: "", tags: [] });
+        setSelectedFilters({ game: "", tags: [] });
+        setHasAppliedFilters(false);
       })
       .catch((error) => {
         console.error("Error fetching videos:", error);
@@ -132,6 +167,7 @@ export default function FilmRoomComponent() {
 
   const handleApplyFilters = () => {
     setSelectedFilters({ ...tempFilters });
+    setHasAppliedFilters(true);
   };
 
   async function handleDownload() {
@@ -144,24 +180,29 @@ export default function FilmRoomComponent() {
         userEmail,
       };
 
-      const response = await axios.post('https://filmshare-fd851c149ec7.herokuapp.com/create-mysquadreel', requestData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post(
+        'https://filmshare-fd851c149ec7.herokuapp.com/create-mysquadreel',
+        requestData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     } catch (error) {
       console.error("Error creating job:", error);
     } finally {
       setIsLoading(false);
     }
   }
-  
+
   const handleFilterChange = (filterType, value) => {
     setTempFilters((prevFilters) => {
       if (filterType === "game") {
-        return prevFilters.game === value
-          ? { ...prevFilters, game: "" }
-          : { ...prevFilters, game: value };
+        return {
+          ...prevFilters,
+          game: value
+        };
       } else {
         const newTags = prevFilters.tags.includes(value)
           ? prevFilters.tags.filter((tag) => tag !== value)
@@ -171,134 +212,286 @@ export default function FilmRoomComponent() {
     });
   };
 
-  return (
-    <div className="text-center">
-      <div className="season-selector mb-4">
-        <select 
-          value={selectedSeason} 
-          onChange={(e) => setSelectedSeason(e.target.value)}
-          className="form-select w-auto mx-auto"
-        >
-          {seasons.map(season => (
-            <option key={season} value={season}>
-              {season === 'current' ? 'Current Season' : `Season ${season}`}
-            </option>
-          ))}
-        </select>
-      </div>
+  // Calculate pagination
+  const indexOfLastVideo = currentPage * videosPerPage;
+  const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
+  const currentVideos = result.slice(indexOfFirstVideo, indexOfLastVideo);
+  const totalPages = Math.ceil(result.length / videosPerPage);
 
-      <div className="text-center mb-4">
-        <Button variant="primary" onClick={handleApplyFilters}>
-          Apply Filters
-        </Button>
-      </div>
-      <p><em>Click "Apply Filters" to see the video list</em> ⬆️</p>
-      <h4>Select a <b>game</b> by clicking one of the buttons below:</h4>
-      <div className="App">
-        <p>
-          {uniquegames.map((game) => (
-            <button
-              key={game}
-              className={`btn btn-outline-light ${tempFilters.game === game ? 'active' : ''}`}
-              value={game}
-              onClick={() => handleFilterChange("game", game)}
-            >
-              {game}
-            </button>
-          ))}
-        </p>
-        <h4>Or select <b>tags</b> by clicking one of the buttons below:</h4>
-        <p>
-          <p><h5><i>Players</i></h5></p>
-          {uniquePlayerTags.map((tag) => (
-            <button
-              key={tag}
-              className={`btn btn-outline-light ${tempFilters.tags.includes(tag) ? 'active' : ''}`}
-              value={tag}
-              onClick={() => handleFilterChange("tag", tag)}
-            >
-              {tag}
-            </button>
-          ))}
-  
-          <p><h5><i>Other Tags</i></h5></p>
-          {uniqueOtherTags.map((tag) => (
-            <button
-              key={tag}
-              className={`btn btn-outline-light ${tempFilters.tags.includes(tag) ? 'active' : ''}`}
-              value={tag}
-              onClick={() => handleFilterChange("tag", tag)}
-            >
-              {tag}
-            </button>
-          ))}
-        </p>
-        {result.length > 0 && (
-          <>
-            <Button variant="outline-primary" size="sm" onClick={() => setSelectedClips(result)}>
-              Select All
-            </Button>
-            <Button variant="outline-danger" size="sm" onClick={() => setSelectedClips([])}>
-              Clear All Selections
-            </Button>
-            <h4>Selected Videos:</h4>
-            <ul className="no-bullets">
-              {selectedClips.map((video) => (
-                <li key={video.link}>{video.videoname} ({video.game})</li>
-              ))}
-            </ul>
-            <div>
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
-              />
-              <Button
-                variant="primary"
-                onClick={handleDownload}
-                className="create-squadreel-btn"
-                disabled={!selectedClips.length || isLoading}
-              >
-                {isLoading ? (
-                  "MySquadReel is processing - check your email in a few minutes for your download link!"
-                ) : (
-                  "Create MySquadReel"
-                )}
-              </Button>
-            </div>
-          </>
-        )}
-        <p>
-          {result.map((video) => (
-            <div key={video._id} className="paddeddiv">
-              <div className="card">
-                <b>{video.videoname}</b>
-                <i>{video.game}</i>
-                <input
-                  type="checkbox"
-                  checked={selectedClips.includes(video)}
-                  onChange={() => {
-                    setSelectedClips((prev) =>
-                      prev.includes(video)
-                        ? prev.filter((clip) => clip !== video)
-                        : [...prev, video]
-                    );
-                  }}
-                  className="custom-checkbox"
-                  style={{ margin: '0 auto' }}
-                />
-              </div>
-              <div className="player-wrapper">
-                <ReactPlayer controls url={video.link} className="react-player" width="100%" height="100%" />
-              </div>
-            </div>
-          ))}
-        </p>
-      </div>
-      <Button type="submit" variant="danger" onClick={logout}>
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    // Scroll to top of video grid
+    window.scrollTo({
+      top: document.querySelector('.video-grid').offsetTop - 100,
+      behavior: 'smooth'
+    });
+  };
+
+  // Create pagination items
+  const renderPaginationItems = () => {
+    let items = [];
+    for (let number = 1; number <= totalPages; number++) {
+      items.push(
+        <Pagination.Item 
+          key={number} 
+          active={number === currentPage}
+          onClick={() => handlePageChange(number)}
+        >
+          {number}
+        </Pagination.Item>
+      );
+    }
+    return items;
+  };
+
+  return (
+    <>
+{/* Header */}
+    <div className="header-container">
+      <Button 
+        variant="outline-light" 
+        className="info-button"
+        onClick={() => setShowInfoModal(true)}
+      >
+        Info
+      </Button>
+      <Button 
+        variant="outline-danger" 
+        className="logout-button"
+        onClick={logout}
+      >
         Logout
       </Button>
     </div>
-  );  
+    <Container className="py-4">
+      {/* Info Modal */}
+        <InfoModal 
+          show={showInfoModal} 
+          handleClose={() => setShowInfoModal(false)} 
+        />
+      {/* Season Selector */}
+      <Row className="mb-4 justify-content-center">
+        <Col xs={12} md={6}>
+          <Form.Select 
+            value={selectedSeason} 
+            onChange={(e) => setSelectedSeason(e.target.value)}
+            className="w-100"
+          >
+            {seasons.map(season => (
+              <option key={season} value={season}>
+                {season === 'current' ? 'Current Season' : `Season ${season}`}
+              </option>
+            ))}
+          </Form.Select>
+        </Col>
+      </Row>
+
+      {/* Game Dropdown and Filter Section */}
+      <Row className="mb-4">
+        <Col xs={12} md={6} className="mb-3">
+          <Form.Group>
+            <Form.Label><h4>Select Game:</h4></Form.Label>
+            <Form.Select
+              value={tempFilters.game}
+              onChange={(e) => handleFilterChange("game", e.target.value)}
+            >
+              <option value="">All Games</option>
+              {uniquegames.map((game) => (
+                <option key={game} value={game}>{game}</option>
+              ))}
+            </Form.Select>
+          </Form.Group>
+        </Col>
+      </Row>
+
+      {/* Tags Section */}
+      <Row className="mb-4">
+        <Col xs={12}>
+          <h4>Select Tags:</h4>
+          <div className="mb-3">
+            <h5 className="text-muted">Players</h5>
+            <div className="d-flex flex-wrap gap-2">
+              {uniquePlayerTags.map((tag) => (
+                <Button
+                  key={tag}
+                  variant={tempFilters.tags.includes(tag) ? "primary" : "outline-primary"}
+                  onClick={() => handleFilterChange("tag", tag)}
+                  className="rounded-pill"
+                >
+                  {tag}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <div className="mb-4">
+            <h5 className="text-muted">Other Tags</h5>
+            <div className="d-flex flex-wrap gap-2">
+              {uniqueOtherTags.map((tag) => (
+                <Button
+                  key={tag}
+                  variant={tempFilters.tags.includes(tag) ? "primary" : "outline-primary"}
+                  onClick={() => handleFilterChange("tag", tag)}
+                  className="rounded-pill"
+                >
+                  {tag}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </Col>
+      </Row>
+
+      {/* Apply Filters Button */}
+      <Row className="mb-4 justify-content-center">
+        <Col xs={12} className="text-center">
+          <Button 
+            variant="primary" 
+            size="lg"
+            onClick={handleApplyFilters}
+            className="px-4"
+          >
+            Apply Filters
+          </Button>
+        </Col>
+      </Row>
+
+      {/* CreateMySquadReel Toggle */}
+      {hasAppliedFilters && result.length > 0 && (
+        <Row className="mb-4 justify-content-center">
+          <Col xs={12} className="text-center">
+            <Button
+              variant="outline-primary"
+              onClick={() => setShowCreateSquadReel(!showCreateSquadReel)}
+              className="mb-3"
+            >
+              {showCreateSquadReel ? 'Hide SquadReel Creator' : 'Create MySquadReel'}
+            </Button>
+
+            {showCreateSquadReel && (
+              <div className="create-squadreel-section p-4 border rounded mt-3">
+                <Button 
+                  variant="outline-primary" 
+                  size="sm" 
+                  onClick={() => setSelectedClips(result)}
+                  className="me-2"
+                >
+                  Select All
+                </Button>
+                <Button 
+                  variant="outline-danger" 
+                  size="sm" 
+                  onClick={() => setSelectedClips([])}
+                >
+                  Clear All Selections
+                </Button>
+
+                {selectedClips.length > 0 && (
+                  <div className="mt-4">
+                    <h5>Selected Videos ({selectedClips.length}):</h5>
+                    <ul className="list-unstyled">
+                      {selectedClips.map((video) => (
+                        <li key={video.link} className="mb-1">
+                          {video.videoname} ({video.game})
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Form.Group className="mt-4">
+                      <Form.Control
+                        type="email"
+                        placeholder="Enter your email address"
+                        value={userEmail}
+                        onChange={(e) => setUserEmail(e.target.value)}
+                        className="mb-3"
+                      />
+                      <Button
+                        variant="primary"
+                        onClick={handleDownload}
+                        disabled={!selectedClips.length || isLoading}
+                        className="w-100"
+                      >
+                        {isLoading ? 
+                          "Processing - Check your email soon!" : 
+                          "Create MySquadReel"}
+                      </Button>
+                    </Form.Group>
+                  </div>
+                )}
+              </div>
+            )}
+          </Col>
+        </Row>
+      )}
+
+      {/* Video Grid - Update to use currentVideos instead of result */}
+      {hasAppliedFilters && (
+        <>
+          <Row className="video-grid">
+            {currentVideos.map((video) => (
+              <Col xs={12} md={6} lg={4} key={video._id} className="mb-4">
+                <div className="video-card">
+                  <div className="video-content">
+                    <div className="video-title-area">
+                      <h5 className="video-title">{video.videoname}</h5>
+                      {showCreateSquadReel && (
+                        <Form.Check
+                          type="checkbox"
+                          checked={selectedClips.includes(video)}
+                          onChange={() => {
+                            setSelectedClips((prev) =>
+                              prev.includes(video)
+                                ? prev.filter((clip) => clip !== video)
+                                : [...prev, video]
+                            );
+                          }}
+                        />
+                      )}
+                    </div>
+                    <p className="game-title text-muted">{video.game}</p>
+                    <div className="video-wrapper">
+                      <ReactPlayer
+                        url={video.link}
+                        controls
+                        width="100%"
+                        height="100%"
+                        className="position-absolute top-0 left-0"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            ))}
+          </Row>
+          
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <Row className="justify-content-center mt-4 mb-4">
+              <Col xs="auto">
+                <Pagination>
+                  <Pagination.First 
+                    onClick={() => handlePageChange(1)}
+                    disabled={currentPage === 1}
+                  />
+                  <Pagination.Prev 
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  />
+                  {renderPaginationItems()}
+                  <Pagination.Next 
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  />
+                  <Pagination.Last 
+                    onClick={() => handlePageChange(totalPages)}
+                    disabled={currentPage === totalPages}
+                  />
+                </Pagination>
+              </Col>
+            </Row>
+          )}
+        </>
+      )}
+    </Container>
+    </>
+  );
 }

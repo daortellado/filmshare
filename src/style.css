@@ -23,6 +23,7 @@ TABLE OF CONTENT
 |  8.1 768PX
 |  8.2 1024PX
 |  8.3 1200PX
+9.0 APP SPECIFIC
 --------------------------------------------------------------*/
 
 /*--------------------------------------------------------------
@@ -609,7 +610,7 @@ svg {
   
   .ui-layout-container { width: 70rem; }
 
-  /*------------------------------------------------------------
+/*------------------------------------------------------------
   COMPONENT
   ------------------------------------------------------------*/
 
@@ -687,5 +688,377 @@ svg {
     padding-bottom: 3rem;
     padding-top: 3rem;
   }
+}
 
+/*--------------------------------------------------------------
+9.0 APP SPECIFIC STYLES
+--------------------------------------------------------------*/
+
+/* Header Layout */
+.header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1.5rem;  /* Increased padding */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(5px);
+}
+
+.info-button {
+  position: absolute;
+  left: 1rem;
+}
+
+.logout-button {
+  position: absolute;
+  right: 1rem;
+}
+
+/* Center all form containers */
+.mb-4 .mb-3,
+.col-xs-12,
+.col-md-6 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Center Form Groups and their contents */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Center all labels and headings */
+.form-label, 
+h4, 
+h5 {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* Center the select dropdowns */
+.form-select {
+  margin: 0 auto;
+  max-width: 400px;
+  text-align: center;
+  text-align-last: center;
+  width: 100%;
+}
+
+/* Center all buttons and form controls */
+.form-control,
+.btn-group,
+.btn {
+  margin: 0 auto;
+}
+
+/* Center tag containers */
+.d-flex.flex-wrap.gap-2 {
+  justify-content: center;
+  width: 100%;
+}
+
+/* Add margin to container to account for fixed header */
+.container {
+  margin-top: 4rem;
+}
+
+/* Modal Styling */
+.modal-content {
+  background-color: #2c2c2c;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header .close {
+  color: white;
+}
+
+.react-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* CreateMySquadReel Section */
+.create-squadreel-section {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  margin: 20px 0;
+  color: white;
+}
+
+/* Remove the bg-light class from your JSX and replace with this styling */
+.create-squadreel-section.p-4.border.rounded {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Tag Buttons */
+.rounded-pill {
+  transition: all 0.2s ease;
+  margin: 4px;
+}
+
+.rounded-pill:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom Checkbox */
+.form-check-input {
+  width: 1.2em;
+  height: 1.2em;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Video Grid */
+.video-grid {
+  margin: 0 -12px;
+  text-align: center;
+}
+
+/* Grid Column */
+.video-grid .col-xs-12,
+.video-grid .col-md-6,
+.video-grid .col-lg-4 {
+  display: flex;
+  padding: 12px;
+  height: 100%;
+}
+
+/* Video Card Styling */
+.video-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease;
+  text-align: center;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.video-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+/* Video Content Container */
+.video-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Video Player Container */
+.video-wrapper {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  width: 100%;
+  margin-top: auto;
+}
+
+/* Video Card Header Area */
+.video-card .video-title-area {
+  min-height: 4rem;  /* Accommodates up to 2 lines of text */
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem;
+  width: 100%;
+}
+
+/* Video Title */
+.video-card .video-title {
+  font-size: 1.1rem;
+  line-height: 1.2;
+  margin: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;  /* Limits text to 2 lines */
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  flex: 1;
+  text-align: left;
+}
+
+/* Checkbox alignment */
+.video-card .form-check {
+  padding-left: 1rem;
+  margin-top: 0.2rem; /* Aligns checkbox with first line of text */
+}
+
+/* Game title spacing */
+.video-card .game-title {
+  padding: 0 1rem 0.75rem 1rem;
+  margin: 0;
+  text-align: left;
+}
+
+/* Pagination Styling */
+.pagination {
+  margin-bottom: 2rem;
+}
+
+.pagination .page-link {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.pagination .page-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+  background-color: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Form Controls */
+.form-control {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.form-control:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+}
+
+.form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Form Select */
+.form-select {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-select:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+}
+
+/* Admin Controls */
+.admin-controls {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Buttons */
+.btn {
+  transition: all 0.2s ease;
+  margin: 2px;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Modal List Styling */
+.modal-body ol {
+  padding-left: 20px;
+  margin-bottom: 1.5rem;
+}
+
+.modal-body ol li {
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+}
+
+.modal-body h5 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+/* Responsive Layout */
+@media (max-width: 768px) {
+  .video-card {
+    margin-bottom: 20px;
+  }
+  
+  .create-squadreel-section {
+    margin: 20px 10px;
+    padding: 15px;
+  }
+
+  .header-container {
+    padding: 0.5rem;
+  }
+
+  .info-button,
+  .logout-button {
+    position: relative;
+    left: auto;
+    right: auto;
+  }
+}
+
+/* Loading States */
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }

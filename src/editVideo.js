@@ -4,96 +4,116 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
+const token = cookies.get("TOKEN");
 
 export default function EditVideo({ video }) {
-  const [selectedVideo, setSelectedVideo] = useState(video);
-  const [editVideoSuccess, setEditVideoSuccess] = useState(""); // State for success message
+  const [videoData, setVideoData] = useState({
+    videoname: "",
+    game: "",
+    link: "",
+    tags: []
+  });
+  const [updateStatus, setUpdateStatus] = useState("");
 
   useEffect(() => {
-    setSelectedVideo(video);
+    if (video) {
+      setVideoData({
+        videoname: video.videoname || "",
+        game: video.game || "",
+        link: video.link || "",
+        tags: video.tags || []
+      });
+    }
   }, [video]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const updatedVideo = {
-      ...selectedVideo,
-      link: e.target.elements.link.value,
-      tags: e.target.elements.tags.value.split(","),
-    };
-
-    const token = cookies.get("TOKEN");
-
+    
     try {
       const configuration = {
         method: "put",
-        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${selectedVideo.videoname}?game=${selectedVideo.game}`,
+        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${video._id}`,
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
         },
-        data: updatedVideo,
+        data: videoData
       };
 
-      const response = await axios(configuration);
-
-      setEditVideoSuccess(response.data.message || "Video updated successfully"); // Set success message
-
+      const result = await axios(configuration);
+      setUpdateStatus("Video updated successfully!");
+      
+      // Reset status after 3 seconds
+      setTimeout(() => setUpdateStatus(""), 3000);
     } catch (error) {
-      // Handle update errors
+      setUpdateStatus("Error updating video");
       console.error("Error updating video:", error);
-      // Implement error message display or other feedback
     }
   };
 
+  const handleTagsChange = (e) => {
+    const tagsArray = e.target.value.split(',').map(tag => tag.trim());
+    setVideoData(prev => ({
+      ...prev,
+      tags: tagsArray
+    }));
+  };
+
+  if (!video) return null;
+
   return (
-    <>
-      <h2>Edit Video</h2>
-      {selectedVideo && (
-        <Form onSubmit={handleSubmit}>
-        {/* video name (pre-populated) */}
-        <Form.Group>
+    <div className="mt-4 p-4 border rounded">
+      <h3 className="mb-4">Edit Video</h3>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3">
           <Form.Label>Video Name</Form.Label>
-          <Form.Control type="text" name="videoname" value={selectedVideo.videoname} disabled />
+          <Form.Control
+            type="text"
+            value={videoData.videoname}
+            onChange={(e) => setVideoData(prev => ({ ...prev, videoname: e.target.value }))}
+            disabled
+          />
         </Form.Group>
 
-        {/* game (pre-populated) */}
-        <Form.Group>
+        <Form.Group className="mb-3">
           <Form.Label>Game</Form.Label>
-          <Form.Control type="text" name="game" value={selectedVideo.game} disabled />
+          <Form.Control
+            type="text"
+            value={videoData.game}
+            onChange={(e) => setVideoData(prev => ({ ...prev, game: e.target.value }))}
+            disabled
+          />
         </Form.Group>
 
-        {/* link */}
-        <Form.Group>
+        <Form.Group className="mb-3">
           <Form.Label>Link</Form.Label>
           <Form.Control
             type="text"
-            name="link"
-            value={selectedVideo.link || ""} // Pre-populate link from state (handle potential undefined value)
-            onChange={(e) => setSelectedVideo({ ...selectedVideo, link: e.target.value })}
+            value={videoData.link}
+            onChange={(e) => setVideoData(prev => ({ ...prev, link: e.target.value }))}
+            disabled
           />
         </Form.Group>
 
-        {/* tags */}
-        <Form.Group>
-          <Form.Label>Tags</Form.Label>
+        <Form.Group className="mb-3">
+          <Form.Label>Tags (comma-separated)</Form.Label>
           <Form.Control
             type="text"
-            name="tags"
-            value={selectedVideo.tags?.join(",") || ""} // Handle potential undefined value and join tags array
-            onChange={(e) => setSelectedVideo({ ...selectedVideo, tags: e.target.value.split(",") })}
+            value={videoData.tags.join(', ')}
+            onChange={handleTagsChange}
+            placeholder="Enter tags separated by commas"
           />
         </Form.Group>
 
-        {/* submit button */}
         <Button variant="primary" type="submit">
           Update Video
         </Button>
-        {editVideoSuccess ? (
-            <p className="text-success">{editVideoSuccess}</p>
-          ) : null} {/* Conditionally render success message */}
-        </Form>
-      )}
-    </>
+
+        {updateStatus && (
+          <div className={`mt-3 text-${updateStatus.includes('Error') ? 'danger' : 'success'}`}>
+            {updateStatus}
+          </div>
+        )}
+      </Form>
+    </div>
   );
 }
