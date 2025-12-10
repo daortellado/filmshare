@@ -123,7 +123,7 @@ export default function FilmRoomComponent() {
     "annya",
     "audrey",
     "pearl",
-    "GO",
+    "go",
     "juliet",
     "natalie",
     "miriam",
