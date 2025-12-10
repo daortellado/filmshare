@@ -21,6 +21,7 @@ const InfoModal = ({ show, handleClose }) => {
           <li>Click "Apply Filters" to see your videos</li>
         </ol>
 
+        {/* TEMPORARILY DISABLED MYSQUADREEL INSTRUCTIONS
         <h5>Creating Your SquadReel:</h5>
         <ol>
           <li>After filtering videos, click "Create MySquadReel"</li>
@@ -29,6 +30,7 @@ const InfoModal = ({ show, handleClose }) => {
           <li>Click "Create MySquadReel" button</li>
           <li>Check your email in a few minutes for your compilation!</li>
         </ol>
+        */}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
@@ -373,7 +375,8 @@ export default function FilmRoomComponent() {
         </Col>
       </Row>
 
-      {/* CreateMySquadReel Toggle */}
+      {/* CreateMySquadReel Toggle - TEMPORARILY DISABLED */}
+      {/* 
       {hasAppliedFilters && result.length > 0 && (
         <Row className="mb-4 justify-content-center">
           <Col xs={12} className="text-center">
@@ -439,7 +442,8 @@ export default function FilmRoomComponent() {
             )}
           </Col>
         </Row>
-      )}
+      )} 
+      */}
 
       {/* Video Grid - Update to use currentVideos instead of result */}
       {hasAppliedFilters && (
@@ -450,7 +454,28 @@ export default function FilmRoomComponent() {
                 <div className="video-card">
                   <div className="video-content">
                     <div className="video-title-area">
-                      <h5 className="video-title">{video.videoname}</h5>
+                      <h5 className="video-title">
+                        {video.videoname}
+                        {/* SUBTLE DOWNLOAD LINK - ADDED TEMPORARILY */}
+                        <a 
+                          href={video.link} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          title="Open to Download"
+                          style={{ 
+                            marginLeft: '10px', 
+                            textDecoration: 'none',
+                            color: '#6c757d', // Muted gray
+                            fontSize: '1rem',
+                            cursor: 'pointer'
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          ⇩
+                        </a>
+                      </h5>
+                      
+                      {/* TEMPORARILY DISABLED CHECKBOXES
                       {showCreateSquadReel && (
                         <Form.Check
                           type="checkbox"
@@ -463,7 +488,9 @@ export default function FilmRoomComponent() {
                             );
                           }}
                         />
-                      )}
+                      )} 
+                      */}
+
                     </div>
                     <p className="game-title text-muted">{video.game}</p>
                     <div className="video-wrapper">

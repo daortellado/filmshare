@@ -44,7 +44,7 @@ function App() {
             <a href="/wchsws">Home</a>
             <a href="/wchsws/admin">Admin</a>
             <a href="/wchsws/filmroom">FilmRoom</a>
-            <a href="/wchsws/tactics">Tactics</a>
+            {/* <a href="/wchsws/tactics">Tactics</a> */}  {/* <--- TEMP DISABLED */}
           </section>
         </Col>
       </Row>
