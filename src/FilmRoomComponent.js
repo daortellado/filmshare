@@ -20,6 +20,12 @@ const InfoModal = ({ show, handleClose }) => {
           <li>Choose any relevant player or category tags</li>
           <li>Click "Apply Filters" to see your videos</li>
         </ol>
+        <h5>Downloading Videos:</h5>
+        <ol>
+          <li>After filtering your results, locate the desired video and click the small arrow next to the video title</li>
+          <li>The video will open in a new browser tab</li>
+          <li>Right click and select "Save Video As" to download</li>
+        </ol>
 
         {/* TEMPORARILY DISABLED MYSQUADREEL INSTRUCTIONS
         <h5>Creating Your SquadReel:</h5>
