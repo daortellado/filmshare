@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Table, Button, Form, Alert, ProgressBar } from "react-bootstrap";
-import Cookies from "universal-cookie";
-
-const cookies = new Cookies();
-const token = cookies.get("TOKEN");
 
 export default function BatchVideo({ gameselection, dropdown }) {
   const [inputLinks, setInputLinks] = useState("");
@@ -54,24 +50,25 @@ export default function BatchVideo({ gameselection, dropdown }) {
         continue;
       }
 
-      try {
-        await axios({
-          method: "post",
-          url: "https://filmshare-fd851c149ec7.herokuapp.com/api/video/",
-          headers: { Authorization: `Bearer ${token}` },
-          data: {
-            videoname: video.videoname,
-            link: video.link,
-            game: gameselection,
-            tags: video.tags 
-          },
-        });
+      // MATCHING YOUR WORKING CONFIGURATION EXACTLY
+      const configuration = {
+        method: "post",
+        url: "https://filmshare-fd851c149ec7.herokuapp.com/addvideo",
+        data: {
+          videoname: video.videoname,
+          game: gameselection, // Using the prop passed from Admin
+          link: video.link,
+          tags: video.tags 
+        },
+      };
 
+      try {
+        await axios(configuration);
         setStagedVideos((prev) =>
           prev.map((v) => (v.id === video.id ? { ...v, status: "success" } : v))
         );
       } catch (error) {
-        console.error("Upload failed for", video.videoname, error);
+        console.error("Upload failed", error);
         setStagedVideos((prev) =>
           prev.map((v) => (v.id === video.id ? { ...v, status: "error" } : v))
         );
@@ -82,18 +79,13 @@ export default function BatchVideo({ gameselection, dropdown }) {
     }
 
     setIsUploading(false);
-    if (stagedVideos.every(v => v.status === "success")) {
-         alert("Batch upload complete!");
-         setStagedVideos([]);
-         setInputLinks("");
-    }
   };
 
-  if (!dropdown) return <Alert variant="info" className="mt-3">Select or enter a Game name above to start batching.</Alert>;
+  if (!dropdown) return <Alert variant="info" className="mt-3">Select or enter a Game name above to start.</Alert>;
 
   return (
-    <div className="mt-4">
-      <h4 className="mb-3">Batch Uploading to: <span className="text-primary">{gameselection}</span></h4>
+    <div className="mt-4 border-top pt-3">
+      <h4>Batch Upload: {gameselection}</h4>
       
       {stagedVideos.length === 0 ? (
         <div className="mb-3">
@@ -102,13 +94,12 @@ export default function BatchVideo({ gameselection, dropdown }) {
             <Form.Control
               as="textarea"
               rows={5}
-              placeholder="https://..."
               value={inputLinks}
               onChange={(e) => setInputLinks(e.target.value)}
             />
           </Form.Group>
           <Button className="mt-2 w-100" onClick={handleProcessLinks} disabled={!inputLinks}>
-            Generate Upload List
+            Process Links
           </Button>
         </div>
       ) : (
@@ -116,7 +107,7 @@ export default function BatchVideo({ gameselection, dropdown }) {
           <div className="d-flex justify-content-between mb-2">
             <Button variant="outline-secondary" size="sm" onClick={() => setStagedVideos([])}>Clear</Button>
             <Button variant="success" onClick={handleBatchUpload} disabled={isUploading}>
-              {isUploading ? "Uploading..." : "Save All to Database"}
+              {isUploading ? "Uploading..." : "Save All to DB"}
             </Button>
           </div>
 
@@ -127,7 +118,7 @@ export default function BatchVideo({ gameselection, dropdown }) {
               <tr>
                 <th>Title</th>
                 <th>Tags</th>
-                <th>Status</th>
+                <th style={{width: '50px'}}>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -137,7 +128,7 @@ export default function BatchVideo({ gameselection, dropdown }) {
                     <Form.Control size="sm" value={video.videoname} onChange={(e) => handleRowChange(video.id, "videoname", e.target.value)} />
                   </td>
                   <td>
-                    <Form.Control size="sm" placeholder="Notes..." value={video.tags} onChange={(e) => handleRowChange(video.id, "tags", e.target.value)} />
+                    <Form.Control size="sm" placeholder="tag1, tag2" value={video.tags} onChange={(e) => handleRowChange(video.id, "tags", e.target.value)} />
                   </td>
                   <td className="text-center">{video.status === 'success' ? "✅" : video.status === 'error' ? "❌" : "⏳"}</td>
                 </tr>
