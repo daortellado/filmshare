@@ -14,6 +14,7 @@ export default function EditVideo({ video }) {
     tags: []
   });
   
+  // Local state for smooth typing
   const [tagInput, setTagInput] = useState("");
   const [updateStatus, setUpdateStatus] = useState("");
 
@@ -25,28 +26,30 @@ export default function EditVideo({ video }) {
         link: video.link || "",
         tags: video.tags || []
       });
-      setTagInput(video.tags ? video.tags.join(', ') : "");
+      // Convert current tags array to a comma-separated string for the input
+      setTagInput(Array.isArray(video.tags) ? video.tags.join(', ') : "");
     }
   }, [video]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Clean up the tags just like before
+    // Clean up the tags before sending
     const tagsArray = tagInput.split(',')
       .map(tag => tag.trim())
-      .filter(tag => tag !== ""); 
+      .filter(tag => tag.length > 0); 
 
     try {
       const configuration = {
         method: "put",
-        // REVERTED: Removed the ?game= parameter since the AdminComponent 
-        // selection logic is now doing the heavy lifting of finding the right video.
-        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(video.videoname)}`,
+        // CRITICAL: Using the unique database ID instead of the non-unique name
+        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${video._id}`, 
         headers: {
           Authorization: `Bearer ${token}`,
         },
         data: {
+          videoname: videoData.videoname,
+          game: videoData.game,
           link: videoData.link,
           tags: tagsArray 
         }
@@ -55,10 +58,11 @@ export default function EditVideo({ video }) {
       await axios(configuration);
       setUpdateStatus("Video updated successfully!");
       
+      // Clear status after 3 seconds
       setTimeout(() => setUpdateStatus(""), 3000);
     } catch (error) {
       console.error("Error updating video:", error);
-      setUpdateStatus("Error updating video. Please try again.");
+      setUpdateStatus("Error updating video. Please check console.");
     }
   };
 
@@ -102,7 +106,7 @@ export default function EditVideo({ video }) {
             type="text"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)} 
-            placeholder="Goal, Free Kick, Save"
+            placeholder="Goal, Save, Header"
           />
         </Form.Group>
 
