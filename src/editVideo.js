@@ -14,7 +14,7 @@ export default function EditVideo({ video }) {
     tags: []
   });
   
-  // NEW: Local state for the text input to prevent jumping/glitching
+  // Local state for smooth typing in the tags field
   const [tagInput, setTagInput] = useState("");
   const [updateStatus, setUpdateStatus] = useState("");
 
@@ -26,7 +26,7 @@ export default function EditVideo({ video }) {
         link: video.link || "",
         tags: video.tags || []
       });
-      // Convert the array to a string for the input field on load
+      // Set the initial string for the tags input
       setTagInput(video.tags ? video.tags.join(', ') : "");
     }
   }, [video]);
@@ -34,22 +34,21 @@ export default function EditVideo({ video }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Convert the text input back into a clean Array for the database
+    // Convert text input to cleaned Array for the database
     const tagsArray = tagInput.split(',')
       .map(tag => tag.trim())
-      .filter(tag => tag !== ""); // Remove empty tags if someone leaves a trailing comma
+      .filter(tag => tag !== ""); 
 
     try {
       const configuration = {
         method: "put",
-        // Notice: Use the original video prop name in case videoname was changed in state
         url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(video.videoname)}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
         data: {
           link: videoData.link,
-          tags: tagsArray // Send the cleaned array
+          tags: tagsArray 
         }
       };
 
@@ -66,7 +65,7 @@ export default function EditVideo({ video }) {
   if (!video) return null;
 
   return (
-    <div className="mt-4 border p-3 rounded bg-light">
+    <div className="mt-4">
       <h3 className="mb-4">Edit Video</h3>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
@@ -102,12 +101,9 @@ export default function EditVideo({ video }) {
           <Form.Control
             type="text"
             value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)} // Smooth typing
+            onChange={(e) => setTagInput(e.target.value)} 
             placeholder="Goal, Free Kick, Save"
           />
-          <Form.Text className="text-muted">
-            Separate tags with commas.
-          </Form.Text>
         </Form.Group>
 
         <Button variant="primary" type="submit" className="w-100">
@@ -115,7 +111,7 @@ export default function EditVideo({ video }) {
         </Button>
 
         {updateStatus && (
-          <div className={`mt-3 text-center fw-bold text-${updateStatus.includes('Error') ? 'danger' : 'success'}`}>
+          <div className={`mt-3 text-${updateStatus.includes('Error') ? 'danger' : 'success'}`}>
             {updateStatus}
           </div>
         )}
