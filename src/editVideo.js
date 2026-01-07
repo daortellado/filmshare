@@ -14,7 +14,6 @@ export default function EditVideo({ video }) {
     tags: []
   });
   
-  // Local state for smooth typing
   const [tagInput, setTagInput] = useState("");
   const [updateStatus, setUpdateStatus] = useState("");
 
@@ -26,7 +25,6 @@ export default function EditVideo({ video }) {
         link: video.link || "",
         tags: video.tags || []
       });
-      // Convert current tags array to a comma-separated string for the input
       setTagInput(Array.isArray(video.tags) ? video.tags.join(', ') : "");
     }
   }, [video]);
@@ -34,7 +32,6 @@ export default function EditVideo({ video }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Clean up the tags before sending
     const tagsArray = tagInput.split(',')
       .map(tag => tag.trim())
       .filter(tag => tag.length > 0); 
@@ -42,27 +39,26 @@ export default function EditVideo({ video }) {
     try {
       const configuration = {
         method: "put",
-        // CRITICAL: Using the unique database ID instead of the non-unique name
-        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${video._id}`, 
+        // Back to the URL the server understands
+        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(video.videoname)}`, 
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        // We send the game here. If your backend uses findOneAndUpdate({videoname, game}), this works.
         data: {
-          videoname: videoData.videoname,
-          game: videoData.game,
+          videoname: video.videoname,
+          game: video.game, 
           link: videoData.link,
           tags: tagsArray 
         }
       };
 
       await axios(configuration);
-      setUpdateStatus("Video updated successfully!");
-      
-      // Clear status after 3 seconds
+      setUpdateStatus("Update attempted!");
       setTimeout(() => setUpdateStatus(""), 3000);
     } catch (error) {
-      console.error("Error updating video:", error);
-      setUpdateStatus("Error updating video. Please check console.");
+      console.error("Error:", error);
+      setUpdateStatus("Error updating. Server rejected the request.");
     }
   };
 
@@ -71,23 +67,16 @@ export default function EditVideo({ video }) {
   return (
     <div className="mt-4">
       <h3 className="mb-4">Edit Video</h3>
+      <p className="text-muted small">Targeting: {video.videoname} in {video.game}</p>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
           <Form.Label>Video Name</Form.Label>
-          <Form.Control
-            type="text"
-            value={videoData.videoname}
-            disabled
-          />
+          <Form.Control type="text" value={videoData.videoname} disabled />
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Game</Form.Label>
-          <Form.Control
-            type="text"
-            value={videoData.game}
-            disabled
-          />
+          <Form.Control type="text" value={videoData.game} disabled />
         </Form.Group>
 
         <Form.Group className="mb-3">
@@ -96,7 +85,6 @@ export default function EditVideo({ video }) {
             type="text"
             value={videoData.link}
             onChange={(e) => setVideoData(prev => ({ ...prev, link: e.target.value }))}
-            placeholder="Enter video link"
           />
         </Form.Group>
 
@@ -106,7 +94,6 @@ export default function EditVideo({ video }) {
             type="text"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)} 
-            placeholder="Goal, Save, Header"
           />
         </Form.Group>
 
