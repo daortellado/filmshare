@@ -13,6 +13,9 @@ export default function EditVideo({ video }) {
     link: "",
     tags: []
   });
+  
+  // NEW: Local state for the text input to prevent jumping/glitching
+  const [tagInput, setTagInput] = useState("");
   const [updateStatus, setUpdateStatus] = useState("");
 
   useEffect(() => {
@@ -23,29 +26,36 @@ export default function EditVideo({ video }) {
         link: video.link || "",
         tags: video.tags || []
       });
+      // Convert the array to a string for the input field on load
+      setTagInput(video.tags ? video.tags.join(', ') : "");
     }
   }, [video]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Convert the text input back into a clean Array for the database
+    const tagsArray = tagInput.split(',')
+      .map(tag => tag.trim())
+      .filter(tag => tag !== ""); // Remove empty tags if someone leaves a trailing comma
+
     try {
       const configuration = {
         method: "put",
-        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(videoData.videoname)}`,
+        // Notice: Use the original video prop name in case videoname was changed in state
+        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(video.videoname)}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
         data: {
           link: videoData.link,
-          tags: videoData.tags
+          tags: tagsArray // Send the cleaned array
         }
       };
 
       await axios(configuration);
       setUpdateStatus("Video updated successfully!");
       
-      // Reset status after 3 seconds
       setTimeout(() => setUpdateStatus(""), 3000);
     } catch (error) {
       console.error("Error updating video:", error);
@@ -53,18 +63,10 @@ export default function EditVideo({ video }) {
     }
   };
 
-  const handleTagsChange = (e) => {
-    const tagsArray = e.target.value.split(',').map(tag => tag.trim());
-    setVideoData(prev => ({
-      ...prev,
-      tags: tagsArray
-    }));
-  };
-
   if (!video) return null;
 
   return (
-    <div className="mt-4">
+    <div className="mt-4 border p-3 rounded bg-light">
       <h3 className="mb-4">Edit Video</h3>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
@@ -99,10 +101,13 @@ export default function EditVideo({ video }) {
           <Form.Label>Tags (comma-separated)</Form.Label>
           <Form.Control
             type="text"
-            value={videoData.tags.join(', ')}
-            onChange={handleTagsChange}
-            placeholder="Enter tags separated by commas"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)} // Smooth typing
+            placeholder="Goal, Free Kick, Save"
           />
+          <Form.Text className="text-muted">
+            Separate tags with commas.
+          </Form.Text>
         </Form.Group>
 
         <Button variant="primary" type="submit" className="w-100">
@@ -110,7 +115,7 @@ export default function EditVideo({ video }) {
         </Button>
 
         {updateStatus && (
-          <div className={`mt-3 text-${updateStatus.includes('Error') ? 'danger' : 'success'}`}>
+          <div className={`mt-3 text-center fw-bold text-${updateStatus.includes('Error') ? 'danger' : 'success'}`}>
             {updateStatus}
           </div>
         )}
