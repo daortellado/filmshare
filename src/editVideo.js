@@ -32,6 +32,7 @@ export default function EditVideo({ video }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Clean up the tags just like before
     const tagsArray = tagInput.split(',')
       .map(tag => tag.trim())
       .filter(tag => tag !== ""); 
@@ -39,14 +40,13 @@ export default function EditVideo({ video }) {
     try {
       const configuration = {
         method: "put",
-        // Keeping the URL parameter for safety
-        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(video.videoname)}?game=${encodeURIComponent(video.game)}`,
+        // REVERTED: Removed the ?game= parameter since the AdminComponent 
+        // selection logic is now doing the heavy lifting of finding the right video.
+        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(video.videoname)}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
         data: {
-          videoname: videoData.videoname, // Explicitly sending name
-          game: videoData.game,           // Explicitly sending game in the body
           link: videoData.link,
           tags: tagsArray 
         }
