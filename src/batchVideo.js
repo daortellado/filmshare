@@ -22,7 +22,7 @@ export default function BatchVideo({ gameselection, dropdown }) {
         videoname: title, 
         link: url.trim(),
         game: gameselection,
-        tags: "", 
+        tags: "", // Initializing as empty string for the input field
         status: "pending" 
       };
     });
@@ -50,15 +50,20 @@ export default function BatchVideo({ gameselection, dropdown }) {
         continue;
       }
 
-      // MATCHING YOUR WORKING CONFIGURATION EXACTLY
+      // FIX: Convert the comma-separated string into a trimmed Array
+      // Example: "Goal, Free Kick" -> ["Goal", "Free Kick"]
+      const processedTags = video.tags 
+        ? video.tags.split(',').map(tag => tag.trim()) 
+        : [];
+
       const configuration = {
         method: "post",
         url: "https://filmshare-fd851c149ec7.herokuapp.com/addvideo",
         data: {
           videoname: video.videoname,
-          game: gameselection, // Using the prop passed from Admin
+          game: gameselection,
           link: video.link,
-          tags: video.tags 
+          tags: processedTags // Now sending the Array exactly like your addVideo component
         },
       };
 
@@ -96,6 +101,7 @@ export default function BatchVideo({ gameselection, dropdown }) {
               rows={5}
               value={inputLinks}
               onChange={(e) => setInputLinks(e.target.value)}
+              placeholder="Paste the links from your notepad here..."
             />
           </Form.Group>
           <Button className="mt-2 w-100" onClick={handleProcessLinks} disabled={!inputLinks}>
@@ -117,7 +123,7 @@ export default function BatchVideo({ gameselection, dropdown }) {
             <thead>
               <tr>
                 <th>Title</th>
-                <th>Tags</th>
+                <th>Tags (comma separated)</th>
                 <th style={{width: '50px'}}>Status</th>
               </tr>
             </thead>
@@ -128,9 +134,16 @@ export default function BatchVideo({ gameselection, dropdown }) {
                     <Form.Control size="sm" value={video.videoname} onChange={(e) => handleRowChange(video.id, "videoname", e.target.value)} />
                   </td>
                   <td>
-                    <Form.Control size="sm" placeholder="tag1, tag2" value={video.tags} onChange={(e) => handleRowChange(video.id, "tags", e.target.value)} />
+                    <Form.Control 
+                        size="sm" 
+                        placeholder="Goal, Free Kick, Save" 
+                        value={video.tags} 
+                        onChange={(e) => handleRowChange(video.id, "tags", e.target.value)} 
+                    />
                   </td>
-                  <td className="text-center">{video.status === 'success' ? "✅" : video.status === 'error' ? "❌" : "⏳"}</td>
+                  <td className="text-center">
+                    {video.status === 'success' ? "✅" : video.status === 'error' ? "❌" : "⏳"}
+                  </td>
                 </tr>
               ))}
             </tbody>
