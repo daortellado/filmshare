@@ -14,7 +14,7 @@ export default function EditVideo({ video }) {
     tags: []
   });
   
-  // Local state for smooth typing in the tags field
+  // Local state for the text input to ensure smooth typing
   const [tagInput, setTagInput] = useState("");
   const [updateStatus, setUpdateStatus] = useState("");
 
@@ -26,7 +26,7 @@ export default function EditVideo({ video }) {
         link: video.link || "",
         tags: video.tags || []
       });
-      // Set the initial string for the tags input
+      // Load existing tags into the text input string
       setTagInput(video.tags ? video.tags.join(', ') : "");
     }
   }, [video]);
@@ -34,7 +34,7 @@ export default function EditVideo({ video }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Convert text input to cleaned Array for the database
+    // Clean up the tags: split by comma, trim whitespace, remove empty strings
     const tagsArray = tagInput.split(',')
       .map(tag => tag.trim())
       .filter(tag => tag !== ""); 
@@ -42,7 +42,8 @@ export default function EditVideo({ video }) {
     try {
       const configuration = {
         method: "put",
-        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(video.videoname)}`,
+        // Added ?game parameter to ensure uniqueness if multiple games have the same video name
+        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(video.videoname)}?game=${encodeURIComponent(video.game)}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -55,6 +56,7 @@ export default function EditVideo({ video }) {
       await axios(configuration);
       setUpdateStatus("Video updated successfully!");
       
+      // Clear status message after 3 seconds
       setTimeout(() => setUpdateStatus(""), 3000);
     } catch (error) {
       console.error("Error updating video:", error);
@@ -102,7 +104,7 @@ export default function EditVideo({ video }) {
             type="text"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)} 
-            placeholder="Goal, Free Kick, Save"
+            placeholder="e.g. Goal, Free Kick, Save"
           />
         </Form.Group>
 
