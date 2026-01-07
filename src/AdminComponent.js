@@ -4,6 +4,7 @@ import Register from "./Register";
 import Video from "./addVideo";
 import AddTactic from "./addTactic";
 import EditVideo from "./editVideo";
+import BatchVideo from "./batchVideo"; // Ensure this matches your filename
 import { Col, Row, Button, Form, Container } from "react-bootstrap";
 import Cookies from "universal-cookie";
 
@@ -21,7 +22,7 @@ export default function AdminComponent() {
   const [seasonName, setSeasonName] = useState('');
   const [showArchiveInput, setShowArchiveInput] = useState(false);
   const [section, setSection] = useState('videos'); // 'videos' or 'tactics'
-  const [mode, setMode] = useState('add'); // 'add' or 'edit'
+  const [mode, setMode] = useState('add'); // 'add', 'edit', or 'batch'
 
   useEffect(() => {
     const fetchData = async () => {
@@ -122,11 +123,11 @@ export default function AdminComponent() {
 
   const handleModeChange = (newMode) => {
     setMode(newMode);
-    setGameSelection("");
-    setSessionSelection("");
-    setDropdown(false);
-    setVideoNames([]);
-    setSelectedVideo(null);
+    if (newMode === 'edit') {
+        setVideoNames([]);
+        setSelectedVideo(null);
+    }
+    // We allow dropdown/game selection to persist when switching between add/batch
   };
 
   return (
@@ -165,7 +166,13 @@ export default function AdminComponent() {
                       variant={mode === 'add' ? 'primary' : 'outline-primary'}
                       onClick={() => handleModeChange('add')}
                     >
-                      Add Video
+                      Single Upload
+                    </Button>
+                    <Button
+                      variant={mode === 'batch' ? 'primary' : 'outline-primary'}
+                      onClick={() => handleModeChange('batch')}
+                    >
+                      Batch Upload
                     </Button>
                     <Button
                       variant={mode === 'edit' ? 'primary' : 'outline-primary'}
@@ -212,6 +219,8 @@ export default function AdminComponent() {
 
                 {mode === 'add' ? (
                   <Video gameselection={gameselection} dropdown={dropdown} />
+                ) : mode === 'batch' ? (
+                  <BatchVideo gameselection={gameselection} dropdown={dropdown} />
                 ) : (
                   selectedVideo && <EditVideo video={selectedVideo} />
                 )}
