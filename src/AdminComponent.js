@@ -4,7 +4,7 @@ import Register from "./Register";
 import Video from "./addVideo";
 import AddTactic from "./addTactic";
 import EditVideo from "./editVideo";
-import BatchVideo from "./BatchVideo"; 
+import BatchVideo from "./batchVideo"; 
 import { Col, Row, Button, Form, Container, InputGroup } from "react-bootstrap";
 import Cookies from "universal-cookie";
 
