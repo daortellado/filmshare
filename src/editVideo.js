@@ -14,9 +14,11 @@ export default function EditVideo({ video }) {
     tags: []
   });
   
+  // Local state for smooth typing (prevents the cursor jumping glitch)
   const [tagInput, setTagInput] = useState("");
   const [updateStatus, setUpdateStatus] = useState("");
 
+  // Sync component state when a new video is selected from the parent
   useEffect(() => {
     if (video) {
       setVideoData({
@@ -25,6 +27,7 @@ export default function EditVideo({ video }) {
         link: video.link || "",
         tags: video.tags || []
       });
+      // Convert the tags array to a comma-separated string for the input field
       setTagInput(Array.isArray(video.tags) ? video.tags.join(', ') : "");
     }
   }, [video]);
@@ -32,6 +35,7 @@ export default function EditVideo({ video }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Convert string back to a clean array
     const tagsArray = tagInput.split(',')
       .map(tag => tag.trim())
       .filter(tag => tag.length > 0); 
@@ -39,12 +43,11 @@ export default function EditVideo({ video }) {
     try {
       const configuration = {
         method: "put",
-        // Back to the URL the server understands
-        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(video.videoname)}`, 
+        url: `https://filmshare-fd851c149ec7.herokuapp.com/api/video/${encodeURIComponent(video.videoname)}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        // We send the game here. If your backend uses findOneAndUpdate({videoname, game}), this works.
+        // We include 'game' here so the backend can find the EXACT record
         data: {
           videoname: video.videoname,
           game: video.game, 
@@ -53,12 +56,17 @@ export default function EditVideo({ video }) {
         }
       };
 
-      await axios(configuration);
-      setUpdateStatus("Update attempted!");
+      const response = await axios(configuration);
+      
+      if (response.status === 200) {
+        setUpdateStatus("Video updated successfully!");
+      }
+      
+      // Clear the message after 3 seconds
       setTimeout(() => setUpdateStatus(""), 3000);
     } catch (error) {
-      console.error("Error:", error);
-      setUpdateStatus("Error updating. Server rejected the request.");
+      console.error("Error updating video:", error);
+      setUpdateStatus("Error updating video. Ensure backend is updated.");
     }
   };
 
@@ -67,24 +75,35 @@ export default function EditVideo({ video }) {
   return (
     <div className="mt-4">
       <h3 className="mb-4">Edit Video</h3>
-      <p className="text-muted small">Targeting: {video.videoname} in {video.game}</p>
+      {/* Small helper text to confirm which specific video is being edited */}
+      <p className="text-muted small">Targeting: <strong>{video.videoname}</strong> from <strong>{video.game}</strong></p>
+      
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
           <Form.Label>Video Name</Form.Label>
-          <Form.Control type="text" value={videoData.videoname} disabled />
+          <Form.Control 
+            type="text" 
+            value={videoData.videoname} 
+            disabled 
+          />
         </Form.Group>
 
         <Form.Group className="mb-3">
           <Form.Label>Game</Form.Label>
-          <Form.Control type="text" value={videoData.game} disabled />
+          <Form.Control 
+            type="text" 
+            value={videoData.game} 
+            disabled 
+          />
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Link</Form.Label>
+          <Form.Label>Video Link</Form.Label>
           <Form.Control
             type="text"
             value={videoData.link}
             onChange={(e) => setVideoData(prev => ({ ...prev, link: e.target.value }))}
+            placeholder="Enter URL"
           />
         </Form.Group>
 
@@ -94,6 +113,7 @@ export default function EditVideo({ video }) {
             type="text"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)} 
+            placeholder="Goal, Save, Header"
           />
         </Form.Group>
 
@@ -102,7 +122,7 @@ export default function EditVideo({ video }) {
         </Button>
 
         {updateStatus && (
-          <div className={`mt-3 text-${updateStatus.includes('Error') ? 'danger' : 'success'}`}>
+          <div className={`mt-3 text-center text-${updateStatus.includes('Error') ? 'danger' : 'success'}`}>
             {updateStatus}
           </div>
         )}
